@@ -131,7 +131,10 @@ Notes:
   `unified_experiment.world_size=4` and `train.grad_accum_steps=8` for you. Rows are assigned to ranks differently,
   so this run is not step-for-step identical to the 8-GPU run.
 - Even with 8 GPUs, a rerun is not guaranteed to be bitwise identical to the reference run. The data must match the
-  released ID lists row for row and in the same order. GPU kernels and collective reductions can also differ.
+  released ID lists row for row and in the same order. GPU kernels and collective reductions can also differ. Two
+  runs on the same single GPU and rows already differ slightly (about 1e-8 in some weights after two steps, with equal
+  losses), and `train.deterministic_algorithms: true` cannot be used with this recipe: torch has no deterministic
+  backward of the slot decoder's adaptive average pooling (`adaptive_avg_pool2d_backward_cuda`).
 - The trainer refuses to start a fresh run in an output directory that already holds `history.jsonl`,
   `metrics.jsonl` or `done.json`.
 - Rows whose cache files are missing are dropped silently. The trainer stops only when a scenario keeps less than

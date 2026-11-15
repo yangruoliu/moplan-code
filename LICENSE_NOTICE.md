@@ -120,7 +120,8 @@ next to the generated ones. The source frames and clips remain subject to the te
   (https://creativecommons.org/licenses/by/4.0/). The evaluation read the switch frames from the Physics-IQ Verified
   copy; for these four cases the first frames and the real takes were compared by sha256 with the files in the
   public bucket and are byte-identical. The switch frames are unmodified; the real clips are resampled to 8 fps,
-  scaled to 448x256 and start at the switch frame (see `assets/showcase/README.md`).
+  scaled to 448x256 and start at the switch frame (see `assets/showcase/README.md`). The mask files
+  (`masks_k16.pt`) are SAM 2.1 instance masks computed from these switch frames.
 - **Cases 8 and 9**, RigidBench samples 00077 and 00059 (first frames and prompts): RigidBench evaluation set v1.1.0
   by Swarnim Jain and Shangzhe Wu, https://doi.org/10.5281/zenodo.21649156 , licensed under CC BY 4.0
   (https://creativecommons.org/licenses/by/4.0/). The first frames are pixel-identical to the RigidBench images, with

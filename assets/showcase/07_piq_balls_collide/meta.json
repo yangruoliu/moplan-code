@@ -91,14 +91,15 @@
       "sample_id": "0031_perspective-left_trimmed-balls-collide",
       "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.",
       "seed": 42,
-      "command": "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --out out/showcase/07_piq_balls_collide/moplan.mp4",
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --masks assets/showcase/07_piq_balls_collide/masks_k16.pt --out out/showcase/07_piq_balls_collide/moplan.mp4",
       "reference": {
        "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
        "raw_mp4_sha256": "7dab780a04b1d1cce69dc6839b34328bc37fa1444e0bcc812c642c76dcaaebb3",
        "raw_mp4_bytes": 648617,
        "trimmed_mp4_sha256": "eec3db6f91e6262e6f17f3662db714daca58a5db8e6608db007b1edceded3d8a",
        "trimmed_mp4_bytes": 49585
-      }
+      },
+      "masks_note": "--masks gives the reference run's k16 masks; the released mask builder keeps different instances on Physics-IQ frames, so without it the MoPlan panel is not expected to match"
      }
     ]
    }
@@ -142,10 +143,16 @@
    "bytes": 1397847,
    "width": 3840,
    "height": 2160
+  },
+  "masks": {
+   "path": "masks_k16.pt",
+   "sha256": "d6d72c5430243fda7e07082052ec3f705c1fcc162c92a1e5b9c1b61ea3ca917b",
+   "bytes": 923760,
+   "content": "k16 SAM 2.1 instance masks of the first frame from the reference run (instance_masks [16,160,160] and instance_channels [2,160,160], fp16; source sam2.1_hiera_large_automatic+filter_v2), read by the MoPlan command with --masks"
   }
  },
  "regenerate": [
   "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --base --out out/showcase/07_piq_balls_collide/base.mp4",
-  "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --out out/showcase/07_piq_balls_collide/moplan.mp4"
+  "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --masks assets/showcase/07_piq_balls_collide/masks_k16.pt --out out/showcase/07_piq_balls_collide/moplan.mp4"
  ]
 }

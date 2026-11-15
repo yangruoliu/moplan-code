@@ -279,7 +279,8 @@ still change pixels, mostly by small amounts:
 2. **SAM 2 masks.** The k16 masks of the Physics-IQ reference runs were made by an older version of the mask builder
    that is not in this repository. Their records name the source `sam2.1_hiera_large_automatic+filter_v2`, while the
    released `scripts/cache_sam2_masks.py` + `scripts/filter_sam2_masks_v2.py` write
-   `sam2.1_hiera_large_automatic+nearest_labels_v2+filter_v2`. These masks are not distributed, so Physics-IQ runs
+   `sam2.1_hiera_large_automatic+nearest_labels_v2+filter_v2`. These masks are not distributed (except the four of
+   the showcase Physics-IQ cases, `assets/showcase/0[4-7]_*/masks_k16.pt`), so Physics-IQ runs
    (and their Stage-1 plans) are not expected to be bit-exact, independent of the GPU (see [EVALUATION.md,
    Bit-exact reproduction](EVALUATION.md#bit-exact-reproduction)). Beyond that, automatic masks depend on the GPU,
    the sam2 commit and the CUDA kernels. Pass the original k16 mask file with `--masks` (or `MASKS_DIR=` in the batch

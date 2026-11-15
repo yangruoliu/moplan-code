@@ -20,6 +20,7 @@ import os
 import statistics
 import subprocess
 import sys
+from decimal import ROUND_HALF_UP, Decimal
 
 
 def main():
@@ -75,9 +76,10 @@ def main():
     dst = os.path.join(a.results_dir, f"agg__{a.label}__{a.mode}.json")
     with open(dst, "w") as f:
         json.dump(out, f, indent=1)
-    sd = f"{out['std_ddof1']:.2f}" if out["std_ddof1"] is not None else "n/a"
+    two = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))   # noqa: E731  33.495 -> 33.50
+    sd = two(out["std_ddof1"]) if out["std_ddof1"] is not None else "n/a"
     what = key if a.mode == "verified" else f"{key} (mean of the rounded per-run scores)"
-    print(f"{a.label} [{a.mode}] n={out['n']} {what}: {out['mean']:.2f} +- {sd}  per-run={['%.2f' % v for v in vals]}")
+    print(f"{a.label} [{a.mode}] n={out['n']} {what}: {two(out['mean'])} +- {sd}  per-run={[two(v) for v in vals]}")
     if a.mode == "verified" and isinstance(out.get("official_aggregator"), dict):
         print(out["official_aggregator"]["stdout"])
     print("->", dst)

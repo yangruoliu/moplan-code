@@ -91,14 +91,15 @@
       "sample_id": "0014_perspective-center_trimmed-ball-in-basket",
       "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.",
       "seed": 42,
-      "command": "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --out out/showcase/06_piq_ball_in_basket/moplan.mp4",
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --masks assets/showcase/06_piq_ball_in_basket/masks_k16.pt --out out/showcase/06_piq_ball_in_basket/moplan.mp4",
       "reference": {
        "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
        "raw_mp4_sha256": "7497978ce5b1dbacb26c48dc69d35172010fd8f573b64d7ba8782ba189acd4dc",
        "raw_mp4_bytes": 398389,
        "trimmed_mp4_sha256": "11ca0146c44113d007366e32a8a693f00339ae27abf8561b2f6ed408b8d343de",
        "trimmed_mp4_bytes": 39696
-      }
+      },
+      "masks_note": "--masks gives the reference run's k16 masks; the released mask builder keeps different instances on Physics-IQ frames, so without it the MoPlan panel is not expected to match"
      }
     ]
    }
@@ -142,10 +143,16 @@
    "bytes": 628413,
    "width": 3840,
    "height": 2160
+  },
+  "masks": {
+   "path": "masks_k16.pt",
+   "sha256": "a843ae0c0390be2975ce308b8c732e12a0e17658197e22d5fcce3f5f1735e29f",
+   "bytes": 923778,
+   "content": "k16 SAM 2.1 instance masks of the first frame from the reference run (instance_masks [16,160,160] and instance_channels [2,160,160], fp16; source sam2.1_hiera_large_automatic+filter_v2), read by the MoPlan command with --masks"
   }
  },
  "regenerate": [
   "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --base --out out/showcase/06_piq_ball_in_basket/base.mp4",
-  "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --out out/showcase/06_piq_ball_in_basket/moplan.mp4"
+  "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --masks assets/showcase/06_piq_ball_in_basket/masks_k16.pt --out out/showcase/06_piq_ball_in_basket/moplan.mp4"
  ]
 }

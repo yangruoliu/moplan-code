@@ -136,16 +136,19 @@ The original runs used one H100 80GB per process with torch 2.5.1 and diffusers 
 library version may change the result in the last bits. Two inputs of MoPlan can also differ from the original batch
 runs (see `docs/INFERENCE.md`, "Bit-exactness: known sources of difference"):
 
-- `generate.py` reruns SAM 2.1 on the first frame. Pass the original k16 mask file with `--masks` to rule this out.
-  For the Physics-IQ cases (4–7) the released mask builder is not expected to reproduce the reference masks: they were
-  made by an older version of the builder that is not in this repository (see `docs/EVALUATION.md`, "Bit-exact
-  reproduction"). Without the original masks, `verify` is therefore expected to report `DIFFERS` for their MoPlan
-  panels (observed for cases 4, 6 and 7); this is not a hardware difference.
+- `generate.py` reruns SAM 2.1 on the first frame unless `--masks` gives a k16 mask file. For the Physics-IQ cases
+  (4–7) the released mask builder is not expected to reproduce the reference masks: they were made by an older
+  version of the builder that is not in this repository (see `docs/EVALUATION.md`, "Bit-exact reproduction").
+  Their reference masks are therefore included as `masks_k16.pt` in each of these case folders, and the MoPlan
+  commands pass them with `--masks`. Without `--masks`, `verify` is expected to report `DIFFERS` for these MoPlan
+  panels; this is not a hardware difference. The MoProbe cases (1–3) run SAM 2.1; the released builder was checked to
+  rebuild their reference masks.
 - `generate.py` encodes the Stage-1 caption next to the empty prompt only, while the batch runs encoded it in batches
   of 4 with other captions. Pass the batch manifest with `--stage1-text-manifest` (and `--stage1-text-shard 0/1`) to
   reproduce those batches.
 
-The original k16 masks and batch manifests are not part of this repository.
+Apart from the four Physics-IQ mask files, the original k16 masks and the batch manifests are not part of this
+repository.
 
 ### Composite videos
 

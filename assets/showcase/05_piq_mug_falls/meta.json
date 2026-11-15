@@ -92,14 +92,15 @@
       "sample_id": "0124_perspective-left_trimmed-mug-breaks",
       "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.",
       "seed": 42,
-      "command": "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --out out/showcase/05_piq_mug_falls/moplan.mp4",
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --masks assets/showcase/05_piq_mug_falls/masks_k16.pt --out out/showcase/05_piq_mug_falls/moplan.mp4",
       "reference": {
        "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
        "raw_mp4_sha256": "79a38650ac3d84261a1c938f6556da8d6032ba8e9958c65d1548eac90b6dd254",
        "raw_mp4_bytes": 459687,
        "trimmed_mp4_sha256": "5eb90afc28a48a804e63670de235183bfe245dadc9b4288fa868dd01a771f1b0",
        "trimmed_mp4_bytes": 41594
-      }
+      },
+      "masks_note": "--masks gives the reference run's k16 masks; the released mask builder keeps different instances on Physics-IQ frames, so without it the MoPlan panel is not expected to match"
      }
     ]
    }
@@ -143,10 +144,16 @@
    "bytes": 827620,
    "width": 3840,
    "height": 2160
+  },
+  "masks": {
+   "path": "masks_k16.pt",
+   "sha256": "2ef53be6a541c109cf5a572d4261cbbda3294e44651cf581936d4514725ac306",
+   "bytes": 923742,
+   "content": "k16 SAM 2.1 instance masks of the first frame from the reference run (instance_masks [16,160,160] and instance_channels [2,160,160], fp16; source sam2.1_hiera_large_automatic+filter_v2), read by the MoPlan command with --masks"
   }
  },
  "regenerate": [
   "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --base --out out/showcase/05_piq_mug_falls/base.mp4",
-  "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --out out/showcase/05_piq_mug_falls/moplan.mp4"
+  "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --masks assets/showcase/05_piq_mug_falls/masks_k16.pt --out out/showcase/05_piq_mug_falls/moplan.mp4"
  ]
 }

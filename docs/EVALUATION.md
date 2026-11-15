@@ -68,7 +68,8 @@ and the native torch SDPA attention. Other GPUs, library versions or attention k
   `launch/eval_bench_inputs.sh moprobe_h` builds one manifest of all frames. The caption batches therefore differ,
   and MoProbe-H Stage-1 exports are not expected to be bit-exact.
 - **SAM 2 masks of Physics-IQ.** The k16 masks of the Physics-IQ reference runs were made by an older version of the
-  mask builder that is not in this repository, and these masks are not distributed. Their records name the source
+  mask builder that is not in this repository, and these masks are not distributed (except the four of the showcase
+  Physics-IQ cases, `assets/showcase/0[4-7]_*/masks_k16.pt`). Their records name the source
   `sam2.1_hiera_large_automatic+filter_v2`, while the released builder (`scripts/cache_sam2_masks.py`, then
   `scripts/filter_sam2_masks_v2.py`) writes `sam2.1_hiera_large_automatic+nearest_labels_v2+filter_v2`. On some
   Physics-IQ frames the two builders keep different instances, which changes the Stage-1 plan and the video. A

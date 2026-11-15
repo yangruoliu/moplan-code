@@ -113,7 +113,8 @@ Besides the variables above, they read:
 
 [assets/showcase/](assets/showcase/README.md) holds 9 comparison cases of MoPlan and the untrained Wan2.2, grouped
 by finding, with a video page at the repository root (`index.html`). Every case has its exact first frame, prompt,
-seed, the `generate.py` command of each generated panel and the sha256 of the original output:
+seed, the `generate.py` command of each generated panel and the sha256 of the original output; the Physics-IQ cases
+(4-7) also include the first-frame masks of the original run:
 
 ```bash
 python assets/showcase/showcase.py commands --case 7     # print the commands of one case (1-9)

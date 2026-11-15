@@ -119,6 +119,8 @@ def test_showcase_commands_parse_with_generate():
                 assert argv[:2] == ["python", "generate.py"], command
                 args = generate.parse_args(argv[2:])
                 assert Path(args.image).as_posix().startswith("assets/showcase/") and (REPO / args.image).is_file()
+                if args.masks:                                         # the Physics-IQ cases ship their reference masks
+                    assert Path(args.masks).as_posix().startswith("assets/showcase/") and (REPO / args.masks).is_file()
                 assert args.output.endswith(f"/{panel['key']}.mp4")
                 assert args.protocol == meta["protocol"]["name"]
                 count += 1

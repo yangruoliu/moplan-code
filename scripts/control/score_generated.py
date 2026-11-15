@@ -7,7 +7,9 @@ with the instrument the real clip was measured with (scripts/control/measure.py:
 CoTracker3 points for background and camera), then reward.score.
 
   track   (GPU) writes <name><suffix> and <name>.measure.npz (the raw readings) next to the clip, skips finished ones
-  rescore (CPU) the rewards again from <name>.measure.npz against the current scenes / reward version
+  rescore (CPU) the rewards again from <name>.measure.npz against the current scenes / reward version.  The stored
+          tracks are float16, so rescored rewards match the ones `track` wrote only to about 1e-3 (in the released
+          RAFT round: 152 of 384 equal, max |difference| 1.4e-3, the same winners); a fresh `track` is bitwise
   table   (CPU) per arm: reward, R_actor, direction within 60 deg / near-zero / length ratio on really moving objects,
           still objects that moved, background, camera, identity (v5: reward_raw, |log2 ratio|, angle, onset error, leak);
           paired differences between arms over the same (clip, seed) with a bootstrap over clips; optional split by a
