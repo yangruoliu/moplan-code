@@ -277,7 +277,10 @@ def run_masks(a: argparse.Namespace, sid: str, image: Path, work: Path) -> Path:
     release_gpu()
     raw = torch.load(raw_dir / f"{sid}.pt", map_location="cpu")
     k16.configure(**K16)
-    out, stats = k16.filter_payload(raw)
+    from PIL import Image
+    with Image.open(image) as im:                      # measure on the content box of the image SAM 2 saw
+        box = k16.filter_box(im.height, im.width)
+    out, stats = k16.filter_payload(raw, box)
     torch.save(out, target)
     log(f"masks: k16 filter kept {out['num_instances']} instances (raw {stats['n_raw']}, fallback {stats['fallback']})")
     return mask_dir

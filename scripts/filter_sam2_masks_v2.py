@@ -6,10 +6,15 @@ border tests is kept, up to 16, largest first.  An earlier variant kept only the
 cap of one half, which dropped small objects that are about to move (a held cube, a ball).
 
 The tests remove SAM2 segments that have no analogue among the training instance masks (which cover the handful of
-bodies that move): background plates and table / wall / floor spans.  Areas are measured inside the fixed content
-band rows 35..125 of the 160 grid, i.e. the letterbox of a 16:9 frame; an instance is dropped when it covers more
-than --area-max of that band or more than --border-max of the band's border ring.  When nothing survives, the two
-smallest instances are kept.
+bodies that move): background plates and table / wall / floor spans.  Areas are measured inside the image's letterbox
+content box on the 160 grid (the arithmetic of cache_sam2_masks.letterbox_square), except that inputs whose box is
+within one grid row of the 16:9 band rows 35..125 (16:9, 1280x704 and 7:4 frames: every benchmark canvas but Morpheus)
+use that band, as the published runs did.  The size comes from --manifest (width/height columns, else the
+first_frame_path image); without it the 16:9 band is used for every input.  An instance is dropped when it covers more
+than --area-max of the box or more than --border-max of the box's border ring.  When nothing survives, the two
+smallest instances are kept.  (Before 2026-11-15 the 16:9 band was used for every input, so on clearly non-16:9
+first frames - Morpheus 1280x1024 - objects outside the band were dropped; the paper's Morpheus rows were re-run
+with this rule.)
 
 Payload schema is preserved exactly (instance_masks [K,160,160] half, instance_channels [2,160,160] half), and
 instance_channels is recomputed with motion_jepa.flow_dit_data.build_instance_inputs -- the same function
@@ -57,15 +62,41 @@ def ring_mask() -> torch.Tensor:
 
 
 RING_M = ring_mask()
+LEGACY_BOX = (ROW0, ROW1, 0, SIDE)   # the 16:9 band
 
 
-def filter_sample(masks: torch.Tensor):
-    """masks [K,160,160] float binary -> (kept_indices, stats)."""
-    content = masks[:, ROW0:ROW1, :] > 0.5            # [K,90,160]
+def content_box(height: int, width: int, side: int = SIDE) -> tuple[int, int, int, int]:
+    """letterbox content box (row0, row1, col0, col1) of a height x width image on the side x side grid"""
+    scale = side / max(height, width)
+    h, w = round(height * scale), round(width * scale)
+    top, left = (side - h) // 2, (side - w) // 2
+    return top, top + h, left, left + w
+
+
+def filter_box(height: int, width: int, side: int = SIDE) -> tuple[int, int, int, int]:
+    """the box the area / border tests use: the content box, or the 16:9 band when the box is within one row of it"""
+    b = content_box(height, width, side)
+    if b[2] == 0 and b[3] == side and abs(b[0] - ROW0) <= 1 and abs(b[1] - ROW1) <= 1:
+        return LEGACY_BOX
+    return b
+
+
+def filter_sample(masks: torch.Tensor, box: tuple[int, int, int, int] = LEGACY_BOX):
+    """masks [K,160,160] float binary -> (kept_indices, stats); area and border are measured inside box."""
+    r0, r1, c0, c1 = box
+    CONTENT_H, CONTENT_W = r1 - r0, c1 - c0
+    CONTENT_AREA = CONTENT_H * CONTENT_W
+    ring = torch.zeros(CONTENT_H, CONTENT_W, dtype=torch.bool)
+    ring[0, :] = True
+    ring[-1, :] = True
+    ring[:, 0] = True
+    ring[:, -1] = True
+    RING = int(ring.sum())
+    content = masks[:, r0:r1, c0:c1] > 0.5            # [K,h,w] inside the box
     areas = content.flatten(1).sum(1)                  # px in the content region
     keep_any = areas > 0
     area_frac = areas / CONTENT_AREA
-    border_cover = (content & RING_M[None]).flatten(1).sum(1) / RING
+    border_cover = (content & ring[None]).flatten(1).sum(1) / RING
 
     idx_all = [i for i in range(masks.shape[0]) if keep_any[i]]
     survivors = [
@@ -114,11 +145,13 @@ def configure(max_kept: int = 16, union_cap: float = 1.0, area_max: float = 0.20
     MAX_KEPT, UNION_COVER_CAP, AREA_FRAC_MAX, BORDER_COVER_MAX = max_kept, union_cap, area_max, border_max
 
 
-def filter_payload(payload: dict) -> tuple[dict, dict]:
-    """One raw cache_sam2_masks.py payload -> (filtered payload, stats) under the current caps (see configure)."""
+def filter_payload(payload: dict, box: tuple[int, int, int, int] | None = None) -> tuple[dict, dict]:
+    """One raw cache_sam2_masks.py payload -> (filtered payload, stats) under the current caps (see configure); box: see
+    filter_box (None = the 16:9 band)."""
+    box = tuple(box) if box is not None else LEGACY_BOX
     masks = payload["instance_masks"].float()
     assert masks.shape[-2:] == (SIDE, SIDE), masks.shape
-    kept, st = filter_sample(masks)
+    kept, st = filter_sample(masks, box)
 
     # fresh label map on the retained set only, then the exact training builder
     ids = torch.zeros(SIDE, SIDE, dtype=torch.long)
@@ -135,12 +168,26 @@ def filter_payload(payload: dict) -> tuple[dict, dict]:
     out["num_instances"] = int((new_masks.flatten(1).sum(1) > 0).sum())
     out["source"] = str(payload.get("source", "")) + "+filter_v2"
     out["filter"] = {
-        "content_rows": [ROW0, ROW1], "area_frac_max": AREA_FRAC_MAX,
+        "content_rows": [int(box[0]), int(box[1])], "content_box": [int(v) for v in box], "area_frac_max": AREA_FRAC_MAX,
         "border_cover_max": BORDER_COVER_MAX, "max_instances_kept": MAX_KEPT,
         "union_coverage_cap": UNION_COVER_CAP,
         "kept_source_slots": kept, "fallback": st["fallback"],
     }
     return out, st
+
+
+def manifest_sizes(path: str) -> dict[str, tuple[int, int]]:
+    """sample_id -> (height, width) from a manifest csv (width/height columns, else the first_frame_path image)"""
+    import csv
+    from PIL import Image
+    out = {}
+    for row in csv.DictReader(open(path, newline="")):
+        if row.get("width") and row.get("height"):
+            out[row["sample_id"]] = (int(row["height"]), int(row["width"]))
+        else:
+            with Image.open(row["first_frame_path"]) as im:
+                out[row["sample_id"]] = (im.height, im.width)
+    return out
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -153,19 +200,22 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--area-max", type=float, default=0.20)
     ap.add_argument("--border-max", type=float, default=0.35)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--manifest", default="", help="csv with sample_id and width,height (or first_frame_path): each sample is "
+                    "measured on its own content box (see filter_box); without it the 16:9 band is used")
     args = ap.parse_args(argv)
     configure(args.max_kept, args.union_cap, args.area_max, args.border_max)
 
     in_dir, out_dir = Path(args.in_dir), Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     files = sorted(p for p in in_dir.iterdir() if p.suffix == ".pt")
+    sizes = manifest_sizes(args.manifest) if args.manifest else {}
     print(f"{len(files)} samples", flush=True)
 
     cov_raw, cov_new, n_raw, n_new, n_fb = [], [], [], [], 0
     drop_area = drop_border = tot_inst = 0
     for path in files:
         payload = torch.load(path, map_location="cpu")
-        out, st = filter_payload(payload)
+        out, st = filter_payload(payload, filter_box(*sizes[path.stem]) if args.manifest else None)
         tmp = out_dir / f"{path.stem}.tmp-{os.getpid()}"
         torch.save(out, tmp)
         tmp.replace(out_dir / path.name)
@@ -184,7 +234,7 @@ def main(argv: list[str] | None = None) -> None:
                     p10=float(np.percentile(x, 10)), p90=float(np.percentile(x, 90)),
                     min=float(x.min()), max=float(x.max()))
 
-    print("\n=== union coverage of the 90x160 content region ===")
+    print("\n=== union coverage of the content region ===")
     print("RAW  SAM2 :", {k: round(v, 4) for k, v in q(cr).items()})
     print("FILTERED  :", {k: round(v, 4) for k, v in q(cn).items()})
     print("\n=== instance count ===")

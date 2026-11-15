@@ -497,3 +497,26 @@ if __name__ == "__main__":
                 failures += 1
                 print(f"FAIL {name}: {error!r}")
     sys.exit(1 if failures else 0)
+
+
+def test_k16_filter_box_rule():
+    """2026-11-15 (C1): the area / border tests use each image's content box, except near-16:9 inputs keep the 16:9 band."""
+    import torch
+    from scripts import filter_sam2_masks_v2 as k16
+    assert k16.filter_box(720, 1280) == k16.LEGACY_BOX          # 16:9
+    assert k16.filter_box(704, 1280) == k16.LEGACY_BOX          # RigidBench
+    assert k16.filter_box(768, 1344) == k16.LEGACY_BOX          # 7:4 (VBench crops)
+    assert k16.filter_box(1080, 1920) == k16.LEGACY_BOX         # Physics-IQ
+    assert k16.filter_box(1024, 1280) == (16, 144, 0, 160)      # Morpheus 5:4
+    assert k16.filter_box(1000, 1000) == (0, 160, 0, 160)       # square
+    # an object entirely above the 16:9 band survives on a 5:4 frame and is dropped by the band
+    masks = torch.zeros(3, 160, 160)
+    masks[0, 18:30, 70:90] = 1          # small ball near the top of a 5:4 frame (outside rows 35..125)
+    masks[1, 60:80, 40:70] = 1
+    masks[2, 90:110, 100:130] = 1
+    k16.configure()
+    kept_band, _ = k16.filter_sample(masks)
+    kept_box, _ = k16.filter_sample(masks, k16.filter_box(1024, 1280))
+    assert 0 not in kept_band and 0 in kept_box
+    out, _ = k16.filter_payload({"instance_masks": masks.half()}, k16.filter_box(1024, 1280))
+    assert out["filter"]["content_box"] == [16, 144, 0, 160]

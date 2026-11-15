@@ -28,7 +28,7 @@ if [ -z "${MASKS_DIR:-}" ] && [ "$(count_files "$MASKS" "*.pt")" -lt 198 ]; then
   log "[piq prepare] SAM 2.1 automatic masks of the switch frames"
   run_sharded sam2 "$L" $PYTHON scripts/cache_sam2_masks.py --manifest "$P/inputs/s1_manifest_op.csv" \
     --sam-checkpoint "$SAM2_CHECKPOINT" --output-dir "$P/masks/sam2_raw"
-  $PYTHON scripts/filter_sam2_masks_v2.py --in-dir "$P/masks/sam2_raw" --out-dir "$MASKS" --max-kept 16 --union-cap 1.0 \
+  $PYTHON scripts/filter_sam2_masks_v2.py --in-dir "$P/masks/sam2_raw" --out-dir "$MASKS" --max-kept 16 --union-cap 1.0 --manifest "$P/inputs/s1_manifest_op.csv" \
     > "$L/sam2_filter.log" 2>&1
 fi
 n=$(count_files "$MASKS" "*.pt")

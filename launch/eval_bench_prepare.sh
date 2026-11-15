@@ -28,7 +28,7 @@ if [ -z "${MASKS_DIR:-}" ] && [ "$(count_files "$MASKS" "*.pt")" -lt "$TOTAL" ];
   log "[$BENCH prepare] SAM 2.1 proposals"
   run_sharded sam2 "$L" $PYTHON -u scripts/cache_sam2_masks.py --manifest "$IN/manifest.csv" --sam-checkpoint "$SAM2_CHECKPOINT" \
     --output-dir "$B/masks/sam2_raw"
-  $PYTHON -u scripts/filter_sam2_masks_v2.py --in-dir "$B/masks/sam2_raw" --out-dir "$MASKS" --max-kept 16 --union-cap 1.0 \
+  $PYTHON -u scripts/filter_sam2_masks_v2.py --in-dir "$B/masks/sam2_raw" --out-dir "$MASKS" --max-kept 16 --union-cap 1.0 --manifest "$IN/manifest.csv" \
     > "$L/sam2_filter.log" 2>&1
 fi
 

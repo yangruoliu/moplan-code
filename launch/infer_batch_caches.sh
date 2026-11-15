@@ -45,7 +45,7 @@ if [ -z "${MASKS_DIR:-}" ] && [ "$(count "$MASKS")" -lt "$N" ]; then
     --sam-checkpoint "$SAM2_CHECKPOINT" --output-dir "$WORK/masks/sam2_raw"
   log "[caches] k16 filter"
   "$PYTHON" -u scripts/filter_sam2_masks_v2.py --in-dir "$WORK/masks/sam2_raw" --out-dir "$MASKS" \
-    --max-kept 16 --union-cap 1.0 > "$L/k16.log" 2>&1
+    --max-kept 16 --union-cap 1.0 --manifest "$MANIFEST" > "$L/k16.log" 2>&1
 fi
 [ "$(count "$MASKS")" -ge "$N" ] || die "only $(count "$MASKS") of $N k16 masks in $MASKS"
 
