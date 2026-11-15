@@ -1,0 +1,19 @@
+{
+ "_about": "Stage-2 GT-condition SFT recipe of the released generator (both experts, one run each from the base model). Read by scripts/s2sft/v2/train_s2sft_v2.py via --overrides; keys starting with '_' are comments.",
+ "_placeholders": "{data_root} = --data-root (or $MOPLAN_SFT_DATA): pools/{p101,ssv2,phyco}/ and val/{p101,phyco,ssv2}/ hold the payloads <sample_id>.pt; {repo_root} = the repository root (id lists under data/ids/stage2_sft); {expert} = high or low.",
+ "_checkpoint": "The released generator was fine-tuned (one RAFT round) from checkpoint-004000 of each expert of this run, i.e. step 4000 of this 8000-step schedule (100 warmup steps, then cosine decay to 0.1x at step 8000). Reproduce it with max_steps 8000 (as below) and --stop-at-step 4000; setting max_steps to 4000 changes the learning-rate curve, and a run cannot be resumed across a change of max_steps.",
+ "_batch": "global_batch 16 = number of GPUs x gradient accumulation steps (the run used 8 GPUs per expert, accumulation 2). The sequence of training samples (clip, sigma, noise) depends only on seed, pools, mix and global_batch, not on the GPU count.",
+ "pools": "p_fall={data_root}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_fall.txt,p_ramp={data_root}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_ramp.txt,p_spring={data_root}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_spring.txt,p_multi={data_root}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_multi.txt,p_liquid={data_root}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_liquid.txt,ssv2={data_root}/pools/ssv2@{repo_root}/data/ids/stage2_sft/train/ssv2.txt,phyco={data_root}/pools/phyco@{repo_root}/data/ids/stage2_sft/train/phyco.txt",
+ "mix": "p_fall:real:0.09640,p_ramp:real:0.27855,p_spring:real:0.03828,p_multi:real:0.05524,p_liquid:real:0.03152,ssv2:real:0.10000,phyco:real:0.40000",
+ "fm_weight_mode": "tube",
+ "max_latent_frames": 11,
+ "init_from": "",
+ "max_steps": 8000,
+ "save_every": 100,
+ "keep_every": 500,
+ "global_batch": 16,
+ "log_every": 10,
+ "seed": 42,
+ "val_pools": "p101={data_root}/val/p101@{repo_root}/data/ids/stage2_sft/val/ids_p101.txt,phyco={data_root}/val/phyco@{repo_root}/data/ids/stage2_sft/val/ids_phyco.txt,ssv2={data_root}/val/ssv2@{repo_root}/data/ids/stage2_sft/val/ids_ssv2.txt",
+ "val_sigmas": 2
+}

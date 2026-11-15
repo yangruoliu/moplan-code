@@ -1,0 +1,152 @@
+{
+ "number": 5,
+ "id": "piq_mug_falls",
+ "folder": "05_piq_mug_falls",
+ "finding_group": "Confabulation",
+ "also_shown_under": "Physics-IQ qualitative",
+ "title": "A mug drops onto a brick (Physics-IQ)",
+ "caption": "In the real video the clamp releases the mug and it falls onto the brick and breaks. The untrained Wan2.2 invents a blue robot arm that slowly lowers the mug; MoPlan lets the mug fall onto the brick (it does not break).",
+ "caption_source": "comparison page",
+ "benchmark": "Physics-IQ Verified",
+ "benchmark_detail": "scenario 0124 (mug-breaks, left view), best-practice description prompt",
+ "sample_ids": [
+  "0124_perspective-left_trimmed-mug-breaks"
+ ],
+ "first_frame": {
+  "file": "first_frame.jpg",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "Physics-IQ switch frame switch-frames/0124_switch-frames_anyFPS_perspective-left_trimmed-mug-breaks.jpg, as used by the Physics-IQ Verified evaluation; byte-identical (same sha256) to the file of the same name in the original public Physics-IQ release, gs://physics-iq-benchmark/switch-frames/",
+  "width": 3840,
+  "height": 2160,
+  "public_release_file": "gs://physics-iq-benchmark/switch-frames/0124_switch-frames_anyFPS_perspective-left_trimmed-mug-breaks.jpg",
+  "public_release_sha256": "81da891a7c593fdef309ce8301d5b33d03b382b1bfb473f7bf6eb081a4376e11",
+  "attribution": "Physics-IQ, Copyright 2024 DeepMind Technologies Limited, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); unmodified"
+ },
+ "prompt_source": "physics-IQ-benchmark descriptions/best_practice/descriptions_base.csv",
+ "protocol": {
+  "name": "physics_iq",
+  "frames": 41,
+  "frames_kept": 40,
+  "fps": 8,
+  "frame_times": "k / 8 s for k = 0..40",
+  "width": 448,
+  "height": 256,
+  "image": "the 3840x2160 Physics-IQ switch frame (the original public release file, also used by Physics-IQ Verified), RGB, resized to 448x256 with LANCZOS",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "41 frames written with imageio (libx264, quality 8) at 8 fps (raw), then trimmed to the first 5 s with ffmpeg -t 5 (trimmed); the composite shows the trimmed clip"
+ },
+ "seed_rule": "seed = 42 for every Physics-IQ video (run 1); both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "position": "left",
+      "label": "Real video",
+      "arm": "real",
+      "source": {
+       "dataset": "Physics-IQ (original release), take 1, 30 fps",
+       "file": "full-videos/take-1/30FPS/0124_full-videos_30FPS_perspective-left_take-1_trimmed-mug-breaks.mp4",
+       "start_seconds": 3.0,
+       "sha256": "8514170ae20cf2f69dd0011f9cfa1e24977da78c39c3e925fee9605c982465ef",
+       "public_release_file": "gs://physics-iq-benchmark/full-videos/take-1/30FPS/0124_full-videos_30FPS_perspective-left_take-1_trimmed-mug-breaks.mp4",
+       "public_release_check": "sha256 identical to the file in the original public Physics-IQ release"
+      },
+      "display": "the recorded continuation from the switch frame (3.0 s), resampled to 8 fps and scaled to 448x256"
+     },
+     {
+      "key": "base",
+      "position": "middle",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "0124_perspective-left_trimmed-mug-breaks",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --base --out out/showcase/05_piq_mug_falls/base.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "68fbd9c3bcc76d3192aeca8373e842128ad45d682455d49c2855a949ab1e57b0",
+       "raw_mp4_bytes": 523292,
+       "trimmed_mp4_sha256": "2da8f1cdbf529b9f235f9f706af241d0819438769fc7f9951e3feb6c31d36595",
+       "trimmed_mp4_bytes": 54925
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "0124_perspective-left_trimmed-mug-breaks",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --out out/showcase/05_piq_mug_falls/moplan.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "79a38650ac3d84261a1c938f6556da8d6032ba8e9958c65d1548eac90b6dd254",
+       "raw_mp4_bytes": 459687,
+       "trimmed_mp4_sha256": "5eb90afc28a48a804e63670de235183bfe245dadc9b4288fa868dd01a771f1b0",
+       "trimmed_mp4_bytes": 41594
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are the trimmed reference mp4 files; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "e1529aed32d1d2179201263deb316a35b02d00c8401058ff65122469d6b60bc3",
+   "bytes": 101952,
+   "width": 1344,
+   "height": 256,
+   "frames": 39,
+   "fps": 8.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "2c0b69a80c8d950f433273d78bf15c535044a337ca9a7f3874f121e57de27d64",
+   "bytes": 34748,
+   "width": 1344,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "47dd1526852a94cc52bc14e284d72a1f44f3f6a4aa4b5f46437f8fa0506fee66",
+   "bytes": 832617,
+   "width": 2070,
+   "height": 549
+  },
+  "first_frame": {
+   "path": "first_frame.jpg",
+   "sha256": "81da891a7c593fdef309ce8301d5b33d03b382b1bfb473f7bf6eb081a4376e11",
+   "bytes": 827620,
+   "width": 3840,
+   "height": 2160
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --base --out out/showcase/05_piq_mug_falls/base.mp4",
+  "python generate.py --protocol physics_iq --image assets/showcase/05_piq_mug_falls/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The blue-black grabber tool was holding the yellow ceramic mug. The blue-black grabber tool is suspended over the ceramic block in front of a white projection screen. The blue-black grabber releases the yellow ceramic mug over the concrete brick.' --seed 42 --out out/showcase/05_piq_mug_falls/moplan.mp4"
+ ]
+}

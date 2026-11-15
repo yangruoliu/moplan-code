@@ -1,0 +1,151 @@
+{
+ "number": 6,
+ "id": "piq_ball_in_basket",
+ "folder": "06_piq_ball_in_basket",
+ "finding_group": "Physics-IQ qualitative",
+ "title": "A ball drops into a basket (Physics-IQ)",
+ "caption": "In the real video the ball drops through the opening and stays in the basket. The untrained Wan2.2 bounces the ball back out and rolls it off screen; MoPlan drops it into the basket, where it stays, as in the real video.",
+ "caption_source": "comparison page",
+ "benchmark": "Physics-IQ Verified",
+ "benchmark_detail": "scenario 0014 (ball-in-basket, center view), best-practice description prompt",
+ "sample_ids": [
+  "0014_perspective-center_trimmed-ball-in-basket"
+ ],
+ "first_frame": {
+  "file": "first_frame.jpg",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "Physics-IQ switch frame switch-frames/0014_switch-frames_anyFPS_perspective-center_trimmed-ball-in-basket.jpg, as used by the Physics-IQ Verified evaluation; byte-identical (same sha256) to the file of the same name in the original public Physics-IQ release, gs://physics-iq-benchmark/switch-frames/",
+  "width": 3840,
+  "height": 2160,
+  "public_release_file": "gs://physics-iq-benchmark/switch-frames/0014_switch-frames_anyFPS_perspective-center_trimmed-ball-in-basket.jpg",
+  "public_release_sha256": "0c7917e71302b97c12e7cce05b0a5b29cf98f31cea98f05515e26aae6ed7a0a0",
+  "attribution": "Physics-IQ, Copyright 2024 DeepMind Technologies Limited, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); unmodified"
+ },
+ "prompt_source": "physics-IQ-benchmark descriptions/best_practice/descriptions_base.csv",
+ "protocol": {
+  "name": "physics_iq",
+  "frames": 41,
+  "frames_kept": 40,
+  "fps": 8,
+  "frame_times": "k / 8 s for k = 0..40",
+  "width": 448,
+  "height": 256,
+  "image": "the 3840x2160 Physics-IQ switch frame (the original public release file, also used by Physics-IQ Verified), RGB, resized to 448x256 with LANCZOS",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "41 frames written with imageio (libx264, quality 8) at 8 fps (raw), then trimmed to the first 5 s with ffmpeg -t 5 (trimmed); the composite shows the trimmed clip"
+ },
+ "seed_rule": "seed = 42 for every Physics-IQ video (run 1); both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "position": "left",
+      "label": "Real video",
+      "arm": "real",
+      "source": {
+       "dataset": "Physics-IQ (original release), take 1, 30 fps",
+       "file": "full-videos/take-1/30FPS/0014_full-videos_30FPS_perspective-center_take-1_trimmed-ball-in-basket.mp4",
+       "start_seconds": 3.0,
+       "sha256": "288f5e0118ebc506d176d0a0c2717e524d2774252581ab80beac220c8c208453",
+       "public_release_file": "gs://physics-iq-benchmark/full-videos/take-1/30FPS/0014_full-videos_30FPS_perspective-center_take-1_trimmed-ball-in-basket.mp4",
+       "public_release_check": "sha256 identical to the file in the original public Physics-IQ release"
+      },
+      "display": "the recorded continuation from the switch frame (3.0 s), resampled to 8 fps and scaled to 448x256"
+     },
+     {
+      "key": "base",
+      "position": "middle",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "0014_perspective-center_trimmed-ball-in-basket",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --base --out out/showcase/06_piq_ball_in_basket/base.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "4e06bba49051fcdc4dc8d2e979b4d25fd998f5027299d5cb5f74f00fe4672a9e",
+       "raw_mp4_bytes": 531996,
+       "trimmed_mp4_sha256": "304c9d3fe9bf50e5fb1af622e967e8f5fd4b906dd0a2a411f1b3f49b6b7dc056",
+       "trimmed_mp4_bytes": 75378
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "0014_perspective-center_trimmed-ball-in-basket",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --out out/showcase/06_piq_ball_in_basket/moplan.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "7497978ce5b1dbacb26c48dc69d35172010fd8f573b64d7ba8782ba189acd4dc",
+       "raw_mp4_bytes": 398389,
+       "trimmed_mp4_sha256": "11ca0146c44113d007366e32a8a693f00339ae27abf8561b2f6ed408b8d343de",
+       "trimmed_mp4_bytes": 39696
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are the trimmed reference mp4 files; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "1b402d4894474b008b111c5dafa9c19dfe511dc91f4f8955a22363163cd19cfd",
+   "bytes": 119380,
+   "width": 1344,
+   "height": 256,
+   "frames": 39,
+   "fps": 8.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "bc5840dfec734fd2f645a37b853a2a11cf6808fd28369da6bba20a12d4c411e3",
+   "bytes": 30621,
+   "width": 1344,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "86a3818fb0f6cdfbf7a6f1090dcdc2a23ce4fabeb18b38ad72715c79b0ddaa51",
+   "bytes": 706818,
+   "width": 2070,
+   "height": 549
+  },
+  "first_frame": {
+   "path": "first_frame.jpg",
+   "sha256": "0c7917e71302b97c12e7cce05b0a5b29cf98f31cea98f05515e26aae6ed7a0a0",
+   "bytes": 628413,
+   "width": 3840,
+   "height": 2160
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --base --out out/showcase/06_piq_ball_in_basket/base.mp4",
+  "python generate.py --protocol physics_iq --image assets/showcase/06_piq_ball_in_basket/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. The black plastic crate sits on a wooden table. The orange inflatable basketball is released over the black plastic crate.' --seed 42 --out out/showcase/06_piq_ball_in_basket/moplan.mp4"
+ ]
+}

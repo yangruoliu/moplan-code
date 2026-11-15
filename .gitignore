@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# local configuration (copied from setup/env.sh.example)
+setup/env.sh
+
+# downloaded weights and third-party checkouts
+weights/
+third_party/
+
+# run outputs
+out/
+outputs/
+runs/
+workspace/
+work/
+eval_work/
+*.log
+
+# large binary files: tracked only under assets/
+*.pt
+!assets/**/*.pt
+*.pth
+*.safetensors
+*.npy
+*.mp4
+!assets/showcase/**/*.mp4
+
+# editors and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

@@ -1,0 +1,152 @@
+{
+ "number": 4,
+ "id": "piq_duck_falls_in_box",
+ "folder": "04_piq_duck_falls_in_box",
+ "finding_group": "Confabulation",
+ "also_shown_under": "Physics-IQ qualitative",
+ "title": "A rubber duck falls into a box (Physics-IQ)",
+ "caption": "In the real video the gripper releases the duck and it falls straight into the box. The untrained Wan2.2 invents a long rod that lowers the gripper into the box and lifts it again (a fabricated agent); MoPlan lets the duck fall into the box.",
+ "caption_source": "comparison page",
+ "benchmark": "Physics-IQ Verified",
+ "benchmark_detail": "scenario 0058 (duck-falls-in-box, left view), best-practice description prompt",
+ "sample_ids": [
+  "0058_perspective-left_trimmed-duck-falls-in-box"
+ ],
+ "first_frame": {
+  "file": "first_frame.jpg",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "Physics-IQ switch frame switch-frames/0058_switch-frames_anyFPS_perspective-left_trimmed-duck-falls-in-box.jpg, as used by the Physics-IQ Verified evaluation; byte-identical (same sha256) to the file of the same name in the original public Physics-IQ release, gs://physics-iq-benchmark/switch-frames/",
+  "width": 3840,
+  "height": 2160,
+  "public_release_file": "gs://physics-iq-benchmark/switch-frames/0058_switch-frames_anyFPS_perspective-left_trimmed-duck-falls-in-box.jpg",
+  "public_release_sha256": "94ba0a84c82046550d4c1bced8c2f8b2e07396a310d95d7f23691b5449a53a56",
+  "attribution": "Physics-IQ, Copyright 2024 DeepMind Technologies Limited, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); unmodified"
+ },
+ "prompt_source": "physics-IQ-benchmark descriptions/best_practice/descriptions_base.csv",
+ "protocol": {
+  "name": "physics_iq",
+  "frames": 41,
+  "frames_kept": 40,
+  "fps": 8,
+  "frame_times": "k / 8 s for k = 0..40",
+  "width": 448,
+  "height": 256,
+  "image": "the 3840x2160 Physics-IQ switch frame (the original public release file, also used by Physics-IQ Verified), RGB, resized to 448x256 with LANCZOS",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "41 frames written with imageio (libx264, quality 8) at 8 fps (raw), then trimmed to the first 5 s with ffmpeg -t 5 (trimmed); the composite shows the trimmed clip"
+ },
+ "seed_rule": "seed = 42 for every Physics-IQ video (run 1); both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "position": "left",
+      "label": "Real video",
+      "arm": "real",
+      "source": {
+       "dataset": "Physics-IQ (original release), take 1, 30 fps",
+       "file": "full-videos/take-1/30FPS/0058_full-videos_30FPS_perspective-left_take-1_trimmed-duck-falls-in-box.mp4",
+       "start_seconds": 3.0,
+       "sha256": "5a9fead3107ac7a6c288cbcbeb1a1bffef94e9eb4ebc46f385b999d3cc0938b2",
+       "public_release_file": "gs://physics-iq-benchmark/full-videos/take-1/30FPS/0058_full-videos_30FPS_perspective-left_take-1_trimmed-duck-falls-in-box.mp4",
+       "public_release_check": "sha256 identical to the file in the original public Physics-IQ release"
+      },
+      "display": "the recorded continuation from the switch frame (3.0 s), resampled to 8 fps and scaled to 448x256"
+     },
+     {
+      "key": "base",
+      "position": "middle",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "0058_perspective-left_trimmed-duck-falls-in-box",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. An orange-black grabber tool is suspended above the open dark green fabric box on a wooden table. The orange-black grabber tool releases the yellow rubber duck above the open dark green fabric box.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/04_piq_duck_falls_in_box/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. An orange-black grabber tool is suspended above the open dark green fabric box on a wooden table. The orange-black grabber tool releases the yellow rubber duck above the open dark green fabric box.' --seed 42 --base --out out/showcase/04_piq_duck_falls_in_box/base.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "dd765d2bc5168df7a5f11ac0dd73b2338a51258c58763da4c7f3c7cbf5a9fdfb",
+       "raw_mp4_bytes": 468134,
+       "trimmed_mp4_sha256": "9c0f2d845bd9c71fcba33a84dd7939ae9bda4b67d9d32f71a064e4c79d2bb246",
+       "trimmed_mp4_bytes": 46628
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "0058_perspective-left_trimmed-duck-falls-in-box",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. An orange-black grabber tool is suspended above the open dark green fabric box on a wooden table. The orange-black grabber tool releases the yellow rubber duck above the open dark green fabric box.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/04_piq_duck_falls_in_box/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. An orange-black grabber tool is suspended above the open dark green fabric box on a wooden table. The orange-black grabber tool releases the yellow rubber duck above the open dark green fabric box.' --seed 42 --out out/showcase/04_piq_duck_falls_in_box/moplan.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "0e30c696359710028c24db0cb28294a87e6f6dda92cc7732d0a7967c6bcdd330",
+       "raw_mp4_bytes": 313667,
+       "trimmed_mp4_sha256": "15ccff74cba9d665aa47d57c8122b74b6fef964755e8c74820c5f1e37a79da96",
+       "trimmed_mp4_bytes": 25245
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are the trimmed reference mp4 files; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "1df029fa1500029d51299ac1f656d0602122a5e9b911e865339ee272e8dfd59e",
+   "bytes": 68979,
+   "width": 1344,
+   "height": 256,
+   "frames": 39,
+   "fps": 8.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "e0ee26d2c7835ce4cd62430982c507c5d4203a480c3ea22258fce34b76816e14",
+   "bytes": 21861,
+   "width": 1344,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "42ecb8f52a7113f5aa423b5724c3ff1cc0253b4a19dbdd2b429962160f0bef2c",
+   "bytes": 573056,
+   "width": 2070,
+   "height": 549
+  },
+  "first_frame": {
+   "path": "first_frame.jpg",
+   "sha256": "94ba0a84c82046550d4c1bced8c2f8b2e07396a310d95d7f23691b5449a53a56",
+   "bytes": 593001,
+   "width": 3840,
+   "height": 2160
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol physics_iq --image assets/showcase/04_piq_duck_falls_in_box/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. An orange-black grabber tool is suspended above the open dark green fabric box on a wooden table. The orange-black grabber tool releases the yellow rubber duck above the open dark green fabric box.' --seed 42 --base --out out/showcase/04_piq_duck_falls_in_box/base.mp4",
+  "python generate.py --protocol physics_iq --image assets/showcase/04_piq_duck_falls_in_box/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. An orange-black grabber tool is suspended above the open dark green fabric box on a wooden table. The orange-black grabber tool releases the yellow rubber duck above the open dark green fabric box.' --seed 42 --out out/showcase/04_piq_duck_falls_in_box/moplan.mp4"
+ ]
+}

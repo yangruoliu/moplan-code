@@ -1,0 +1,194 @@
+{
+ "number": 1,
+ "id": "moprobe_ruler_drop_hold",
+ "folder": "01_moprobe_ruler_drop_hold",
+ "finding_group": "Inertia",
+ "title": "Dropping the ruler vs. holding it still",
+ "caption": "One first frame, two instructions. Top (A, the real event): a hand drops the ruler onto the notebook. Bottom (B): the hand holds the ruler above the notebook and nothing moves. The untrained Wan2.2 does the same thing for both: it slides the ruler to the right edge of the notebook and holds it there. MoPlan puts the ruler down on the notebook for A, as in the real video, and keeps it where it is for B.",
+ "caption_source": "comparison page",
+ "benchmark": "Something-Something v2 validation frame",
+ "benchmark_detail": "first frame of Something-Something v2 validation video 9578 with an instruction pair from data/moprobe/moprobe_h_rows.jsonl; this frame was removed from MoProbe-H by the item check (data/moprobe/rejected_frames.json), so it is not part of the MoProbe-H set or its measurements",
+ "sample_ids": [
+  "ssv2_9578-ex",
+  "ssv2_9578-cf"
+ ],
+ "sample_id_suffixes": {
+  "ex": "instruction describing the real event",
+  "cf": "opposite (counterfactual) instruction"
+ },
+ "first_frame": {
+  "file": "first_frame.png",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "Something-Something v2 video 9578, frame 0 at 12 fps, letterboxed onto a 1280x720 canvas",
+  "width": 1280,
+  "height": 720,
+  "attribution": "Something-Something v2, (C) 2017 Twenty Billion Neurons GmbH, used under the dataset's own terms (see LICENSE_NOTICE.md); modified: letterboxed onto a 1280x720 canvas"
+ },
+ "protocol": {
+  "name": "moprobe",
+  "frames": 37,
+  "fps": 7,
+  "frame_times": "k / 7 s for k = 0..36",
+  "width": 448,
+  "height": 256,
+  "image": "RGB, resized to 448x256 with LANCZOS (stretched, no crop). The input PNG is the source frame letterboxed onto a 1280x720 (16:9) canvas.",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "uint8 frames [37, 256, 448, 3]; the reference hashes are of these frames saved with numpy.save"
+ },
+ "seed_rule": "seed = 42 + (crc32(sample_id) mod 100000), seed index 0; both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "layout": {
+  "rows": [
+   {
+    "row": "A",
+    "title": "A (real event): A hand drops the ruler onto the notebook.",
+    "panels": [
+     {
+      "position": "left",
+      "label": "Real video",
+      "arm": "real",
+      "source": {
+       "dataset": "Something-Something v2 (validation split)",
+       "video_id": "9578",
+       "file": "20bn-something-something-v2/9578.webm",
+       "start_frame_at_12fps": 0,
+       "start_seconds": 0.0
+      },
+      "display": "resampled to 7 fps and stretched to 448x256; the first displayed frame is the frame the MoProbe first frame was taken from"
+     },
+     {
+      "key": "A_base",
+      "position": "middle",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "ssv2_9578-ex",
+      "prompt": "A hand drops the ruler onto the notebook.",
+      "seed": 45066,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand drops the ruler onto the notebook.' --sample-id ssv2_9578-ex --base --out out/showcase/01_moprobe_ruler_drop_hold/A_base.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "7edec2efa9183dcd084ba1a5b4fd7bb1873866fdb7b2e88f97b78634c38c6041",
+       "bytes": 12730496
+      }
+     },
+     {
+      "key": "A_moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "ssv2_9578-ex",
+      "prompt": "A hand drops the ruler onto the notebook.",
+      "seed": 45066,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand drops the ruler onto the notebook.' --sample-id ssv2_9578-ex --out out/showcase/01_moprobe_ruler_drop_hold/A_moplan.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "feec60d66813867f8853a4cfb1c01d1da2664f03b1a3bb57b41c8edb0ce68f87",
+       "bytes": 12730496
+      }
+     }
+    ]
+   },
+   {
+    "row": "B",
+    "title": "B (opposite): A hand holds the ruler above the notebook and keeps holding it; nothing moves.",
+    "panels": [
+     {
+      "position": "left",
+      "label": "First frame",
+      "arm": "still",
+      "source": "frame 0 of the row A MoPlan clip, held as a still for the whole clip"
+     },
+     {
+      "key": "B_base",
+      "position": "middle",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "ssv2_9578-cf",
+      "prompt": "A hand holds the ruler above the notebook and keeps holding it; nothing moves.",
+      "seed": 19247,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand holds the ruler above the notebook and keeps holding it; nothing moves.' --sample-id ssv2_9578-cf --base --out out/showcase/01_moprobe_ruler_drop_hold/B_base.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "80e0494697504df8b272e838423bbce78cda97ace318cfc75fc8f5b342d22172",
+       "bytes": 12730496
+      }
+     },
+     {
+      "key": "B_moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "ssv2_9578-cf",
+      "prompt": "A hand holds the ruler above the notebook and keeps holding it; nothing moves.",
+      "seed": 19247,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand holds the ruler above the notebook and keeps holding it; nothing moves.' --sample-id ssv2_9578-cf --out out/showcase/01_moprobe_ruler_drop_hold/B_moplan.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "a3eccb0c9a6ee9284fa54382d59f4353da44763c1a3b88196f924847f8d01fa3",
+       "bytes": 12730496
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are h264 exports of the reference frames; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "318edb2664194f32c53301b761becf2cb6ad0f78c669dedc8f681a6006fbcdcf",
+   "bytes": 412738,
+   "width": 1344,
+   "height": 572,
+   "frames": 37,
+   "fps": 7.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "6efe8ae8149567a3acb67b7f254628e3e04f6d39ae9cde880febb6890388da3d",
+   "bytes": 104615,
+   "width": 1344,
+   "height": 572
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "47816146bd635533158af8cb3730bd9fc40980e6f800d27d9589412015fc8265",
+   "bytes": 1411056,
+   "width": 2070,
+   "height": 915
+  },
+  "first_frame": {
+   "path": "first_frame.png",
+   "sha256": "32c47f2f7571b8382088488a2fb9abe398c71e422723e16d19492c2c9237ea55",
+   "bytes": 551645,
+   "width": 1280,
+   "height": 720
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand drops the ruler onto the notebook.' --sample-id ssv2_9578-ex --base --out out/showcase/01_moprobe_ruler_drop_hold/A_base.mp4",
+  "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand drops the ruler onto the notebook.' --sample-id ssv2_9578-ex --out out/showcase/01_moprobe_ruler_drop_hold/A_moplan.mp4",
+  "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand holds the ruler above the notebook and keeps holding it; nothing moves.' --sample-id ssv2_9578-cf --base --out out/showcase/01_moprobe_ruler_drop_hold/B_base.mp4",
+  "python generate.py --protocol moprobe --image assets/showcase/01_moprobe_ruler_drop_hold/first_frame.png --prompt 'A hand holds the ruler above the notebook and keeps holding it; nothing moves.' --sample-id ssv2_9578-cf --out out/showcase/01_moprobe_ruler_drop_hold/B_moplan.mp4"
+ ],
+ "page_note": "Note: this example contains frames and a real clip from Something-Something v2, whose licence may not allow redistribution, and this first frame was excluded from the paper's probe set."
+}

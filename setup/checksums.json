@@ -1,0 +1,273 @@
+{
+  "format": 1,
+  "_comment": "Pinned sources and checksums for setup/download_weights.py. Third-party sha256 values match the copies used for the reference runs. Entries whose sha256 is null are placeholders and are reported but not verified.",
+  "components": {
+    "wan": {
+      "description": "Wan2.2-I2V-A14B (Diffusers format): both experts, VAE, umT5 text encoder and tokenizer",
+      "env": "WAN_MODEL_DIR",
+      "default_path": "weights/Wan2.2-I2V-A14B-Diffusers",
+      "layout": "dir",
+      "download": "listed",
+      "repo_id": "Wan-AI/Wan2.2-I2V-A14B-Diffusers",
+      "repo_type": "model",
+      "revision": "596658fd9ca6b7b71d5057529bbf319ecbc61d74",
+      "license": "Apache-2.0",
+      "files": {
+        "model_index.json": {
+          "size": 600,
+          "sha256": "50ba96f2b36888eab6b33afb4a74254652fb4f43be4767cea633f4bcda67f5d8"
+        },
+        "scheduler/scheduler_config.json": {
+          "size": 820,
+          "sha256": "40624e058848feddf4bc2da5e8a232668b9a6f4a4939365810bebd9ce0166578"
+        },
+        "text_encoder/config.json": {
+          "size": 855,
+          "sha256": "a2bcb24699f6c009a2427432bdd483ef8b2b42a712abc9503759cdc77d171f07"
+        },
+        "text_encoder/model-00001-of-00003.safetensors": {
+          "size": 4935812536,
+          "sha256": "a8e861969c7433e707cc5a74065d795d36cca07ec96eb6763eb4083df7248f58"
+        },
+        "text_encoder/model-00002-of-00003.safetensors": {
+          "size": 4983103192,
+          "sha256": "d57d948ece4837d850b7a859a4415121d57cacf8b9ee1d4db200c67f592902d7"
+        },
+        "text_encoder/model-00003-of-00003.safetensors": {
+          "size": 1442935480,
+          "sha256": "0da9ee284e21d1406df708788db1d502d95d75f69faa25cd26151bf8829b7c5f"
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "size": 22476,
+          "sha256": "31c4c7bcce679eaa0dd4667462394ddb013dc2f748e0bffc893dc9146a320dab"
+        },
+        "tokenizer/special_tokens_map.json": {
+          "size": 7079,
+          "sha256": "456b58fd240a06c743a7c2cf8008bec501240d68ebd1fc4018ea569505fea270"
+        },
+        "tokenizer/spiece.model": {
+          "size": 4548313,
+          "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458"
+        },
+        "tokenizer/tokenizer.json": {
+          "size": 16837459,
+          "sha256": "20a46ac256746594ed7e1e3ef733b83fbc5a6f0922aa7480eda961743de080ef"
+        },
+        "tokenizer/tokenizer_config.json": {
+          "size": 61758,
+          "sha256": "1d8d2a216bf8e70ac15b7ddcea566c4dd0433c024b39a58ca5e4c66bd78defbd"
+        },
+        "transformer/config.json": {
+          "size": 495,
+          "sha256": "6809423c4a92f886feded9f85f55c667d73a2332d5e011fab4172f3448dd5666"
+        },
+        "transformer/diffusion_pytorch_model-00001-of-00012.safetensors": {
+          "size": 4864810208,
+          "sha256": "0400c403bd7cfe6c1c29b47ff9cb575495dc590c9be2511a3b44ae5795add106"
+        },
+        "transformer/diffusion_pytorch_model-00002-of-00012.safetensors": {
+          "size": 4919594456,
+          "sha256": "0da8ce107f7ccbe323be7b35c5e81ce90504995b9cf0a0c06e4132f836474ba4"
+        },
+        "transformer/diffusion_pytorch_model-00003-of-00012.safetensors": {
+          "size": 4919465128,
+          "sha256": "4bee4dbbb916f167ce96d3f795ae316cd221713302ee427b7df457ea4dafe034"
+        },
+        "transformer/diffusion_pytorch_model-00004-of-00012.safetensors": {
+          "size": 4919594536,
+          "sha256": "e6fec68a39ce49cfde2e6464061df64b853f0354151ca17931f8dd028dd47ff6"
+        },
+        "transformer/diffusion_pytorch_model-00005-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "cf66f3fcf66788d2e939d0e60da015fa0953c48da92ae67f04ff085c4e826104"
+        },
+        "transformer/diffusion_pytorch_model-00006-of-00012.safetensors": {
+          "size": 4919594552,
+          "sha256": "cdc4bb9e21d17e8577c915215429827ad5d58bee2021ed0d63c6854596b06c90"
+        },
+        "transformer/diffusion_pytorch_model-00007-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "c9c48dfd22c8546e20a805a5e5d698f6fbebc7b1426db92d693b75ccd10e574c"
+        },
+        "transformer/diffusion_pytorch_model-00008-of-00012.safetensors": {
+          "size": 4919594552,
+          "sha256": "1bed82c03707de72ef06f624f2bbc9d43370cc208d657989dd07b08b1ff998ab"
+        },
+        "transformer/diffusion_pytorch_model-00009-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "779d7d8901239b5deef86597f74a4eccaf91fee674f05854dfc3d808e556805b"
+        },
+        "transformer/diffusion_pytorch_model-00010-of-00012.safetensors": {
+          "size": 4919594552,
+          "sha256": "ea1ebb7975f001bda912c56bf8095865605e6a019b0c180e1de74129cfbfef98"
+        },
+        "transformer/diffusion_pytorch_model-00011-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "38d9349f1c29a99c1f78ef53d228c1f51dde301bd3e33296db1a7e7f8c25f6fe"
+        },
+        "transformer/diffusion_pytorch_model-00012-of-00012.safetensors": {
+          "size": 3095607280,
+          "sha256": "978ff94fe927dab5dc2a60030297043abff35a7d93524ce286b07c49025edfe1"
+        },
+        "transformer/diffusion_pytorch_model.safetensors.index.json": {
+          "size": 97307,
+          "sha256": "fb80e949700c1a9a1d761d7bf56e78e6c5592d819bb600d76092e65497b9dfa5"
+        },
+        "transformer_2/config.json": {
+          "size": 495,
+          "sha256": "6809423c4a92f886feded9f85f55c667d73a2332d5e011fab4172f3448dd5666"
+        },
+        "transformer_2/diffusion_pytorch_model-00001-of-00012.safetensors": {
+          "size": 4864810208,
+          "sha256": "95256668a2f7f60fd80db7b0ef2edd0700d18bfd44365a546c4eb75150b43518"
+        },
+        "transformer_2/diffusion_pytorch_model-00002-of-00012.safetensors": {
+          "size": 4919594456,
+          "sha256": "3af2c8d8990a9a214fa13d2206dabc6ddd7148260ceffa570a93ff3a077d0ea0"
+        },
+        "transformer_2/diffusion_pytorch_model-00003-of-00012.safetensors": {
+          "size": 4919465128,
+          "sha256": "47895d51e50eb833cfb729a55c0a88d69801171c3da64b895b44a2128315894f"
+        },
+        "transformer_2/diffusion_pytorch_model-00004-of-00012.safetensors": {
+          "size": 4919594536,
+          "sha256": "c60f290bf6173bcd451ce4bb69054de077e6bc68609dc575033123996feebe70"
+        },
+        "transformer_2/diffusion_pytorch_model-00005-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "fa53bebbb015efcf3de972a3029a34d4a8535a8d098f8f6e6210ea92d392b8f3"
+        },
+        "transformer_2/diffusion_pytorch_model-00006-of-00012.safetensors": {
+          "size": 4919594552,
+          "sha256": "11afdf78c0219e950484e72e046ee0aa2a583052d048f57c339ce4eee3737130"
+        },
+        "transformer_2/diffusion_pytorch_model-00007-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "8dc3fc3f8398854f6e1a521ef79d7e2199da7d039caa38625929acf83ab0f41c"
+        },
+        "transformer_2/diffusion_pytorch_model-00008-of-00012.safetensors": {
+          "size": 4919594552,
+          "sha256": "fcf286f8a4745b6e7dd557d50f2e8126ac20037c1f4c3d75493b2a32861b29a4"
+        },
+        "transformer_2/diffusion_pytorch_model-00009-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "2571fe8aefce8557b97809e9879e7d2650b9033944cf28e77007977cb1b6d7b7"
+        },
+        "transformer_2/diffusion_pytorch_model-00010-of-00012.safetensors": {
+          "size": 4919594552,
+          "sha256": "8496ff20bb26d39484c940bc27047f0a7ca107f8ee23ef4ba7b2bd2f36c1dbfd"
+        },
+        "transformer_2/diffusion_pytorch_model-00011-of-00012.safetensors": {
+          "size": 4919465224,
+          "sha256": "2bb74907c0cfffcdae0be5efe462a05179f199eee21be79b5ad20ea296a45869"
+        },
+        "transformer_2/diffusion_pytorch_model-00012-of-00012.safetensors": {
+          "size": 3095607280,
+          "sha256": "2d3f1aca89bc664f029efd5a9cf848b47fa671d781681ce05dfeb4671a5bd77d"
+        },
+        "transformer_2/diffusion_pytorch_model.safetensors.index.json": {
+          "size": 97307,
+          "sha256": "fb80e949700c1a9a1d761d7bf56e78e6c5592d819bb600d76092e65497b9dfa5"
+        },
+        "vae/config.json": {
+          "size": 724,
+          "sha256": "47e8bcf55e93e9c182e1962a8c7a0650faeb34ea0f66826d6f8aaa9f73e08ec9"
+        },
+        "vae/diffusion_pytorch_model.safetensors": {
+          "size": 507591892,
+          "sha256": "d6e524b3fffede1787a74e81b30976dce5400c4439ba64222168e607ed19e793"
+        }
+      }
+    },
+    "moplan": {
+      "description": "MoPlan weights: Stage-1 motion planner and Stage-2 generator (high- and low-noise experts)",
+      "env": "MOPLAN_WEIGHTS",
+      "default_path": "weights/MoPlan",
+      "layout": "dir",
+      "download": "listed",
+      "repo_id": "yrlyrl/MoPlan",
+      "repo_type": "model",
+      "revision": "b0db0e367f6508977ec9eca693ae3888c52be2dd",
+      "license": "CC-BY-NC-4.0",
+      "files": {
+        "stage1/backend_params.pt": {
+          "size": 618208770,
+          "sha256": "be14419501b8885e66bc64e9ff4ab75d4bbcd6baeb1d17c0dbc0e5c309644884"
+        },
+        "stage1/decoder.pt": {
+          "size": 20464764,
+          "sha256": "94ad082dfb860234ac6ab5804168e26b13d0a7334c95afe2b5410afa4ca68c64"
+        },
+        "stage1/trainer_state.json": {
+          "size": 5541,
+          "sha256": "dcc1ec053a9ecff35dad290ecffef6787a865e26e6068c93786ed20c785844eb"
+        },
+        "stage1/resolved_config.yaml": {
+          "size": 11924,
+          "sha256": "bcc375d0054f804eee9496335158af5fda1e6d7c65f95c778bbf95e2f27f0dff"
+        },
+        "stage1/prior_latent.pt": {
+          "size": 33973,
+          "sha256": "375b5d688df6e1a735fb7b11dae87075e24d051600404a407de17395bca83525"
+        },
+        "stage1/checkpoint_complete.json": {
+          "size": 1102,
+          "sha256": "d595b15a056c71963cec3dbc9b356a2fb7fcd79e8885363807923f3508ccd5de"
+        },
+        "stage2/high/lora_params.pt": {
+          "size": 613678850,
+          "sha256": "6a672f0e8604d004a3b21cfcf4bbe691cc3e3bbc04373790853e0988d16fad4b"
+        },
+        "stage2/high/motion_adapter.pt": {
+          "size": 235892827,
+          "sha256": "160833f98f580b5206fbd52aa0e0e94b6f7b81e87428b56669f8bea5a3fa7d31"
+        },
+        "stage2/low/lora_params.pt": {
+          "size": 613678850,
+          "sha256": "dde80106ebec9e2849cd6d5fe1a6122f7f9ef91d838c88093e87adf4d46e096f"
+        },
+        "stage2/low/motion_adapter.pt": {
+          "size": 235892827,
+          "sha256": "b0e4e965969231cdec7c2f3f42fe963e3a836cd950dc5432d1e212e2d1141e10"
+        }
+      }
+    },
+    "sam2": {
+      "description": "SAM 2.1 Hiera-L checkpoint (first-frame instance masks, video mask propagation)",
+      "env": "SAM2_CHECKPOINT",
+      "default_path": "weights/sam2/sam2.1_hiera_large.pt",
+      "layout": "file",
+      "download": "listed",
+      "repo_id": "facebook/sam2.1-hiera-large",
+      "repo_type": "model",
+      "revision": "665f8e2ad61cf5f53d65644ff27c8ee525124610",
+      "license": "Apache-2.0",
+      "mirror_url": "https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt",
+      "files": {
+        "sam2.1_hiera_large.pt": {
+          "size": 898083611,
+          "sha256": "2647878d5dfa5098f2f8649825738a9345572bae2d4350a2468587ece47dd318",
+          "md5": "2b30654b6112c42a115563c638d238d9"
+        }
+      }
+    },
+    "cotracker": {
+      "description": "CoTracker3 offline (scaled) checkpoint (point tracks for real-video plans and the RAFT reward)",
+      "env": "COTRACKER_CKPT",
+      "default_path": "weights/cotracker3/scaled_offline.pth",
+      "layout": "file",
+      "download": "listed",
+      "repo_id": "facebook/cotracker3",
+      "repo_type": "model",
+      "revision": "bf55ea50d4390e1820a267f131cd6587240fb2c5",
+      "license": "CC-BY-NC-4.0",
+      "files": {
+        "scaled_offline.pth": {
+          "size": 101890938,
+          "sha256": "2670d4562ed69326dda775a26e54883925cd11b6fc9b24cb7aa9f8078bce7834",
+          "md5": "d04d7f592fcbdc8d29b0b98443a282e9"
+        }
+      }
+    }
+  }
+}

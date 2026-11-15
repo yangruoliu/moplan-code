@@ -1,0 +1,124 @@
+# Stage-2 RAFT round (launch/raft.sh): generator, sampler and trainer settings.
+# Sampling (scripts/infer_stage2_cond_v2.py) reads paths.wan_model, model and evaluation; training
+# (scripts/train_s2_v4.py) reads everything.  The data length settings are those of the 41-frame GT-SFT run
+# (41 frames at 7 fps, 11 latents, at-rest padding); the condition interface is legacy27 (20 + 7 channels).
+# The RAFT schedule (300 steps, seed, pools, mix, replay share, save/log intervals) is set by
+# configs/stage2/raft_overrides.json, which overrides max_steps / save_every / seed below.
+seed: 0
+paths:
+  wan_model: ''                      # Wan2.2-I2V-A14B-Diffusers directory; $WAN_MODEL_DIR takes precedence
+  output_dir: outputs/stage2_raft    # used only without --output-dir
+data:
+  frames: 41
+  span_seconds: 5.714286
+  height: 256
+  width: 448
+  latent_frame_indices:
+  - 0
+  - 4
+  - 8
+  - 12
+  - 16
+  - 20
+  - 24
+  - 28
+  - 32
+  - 36
+  - 40
+  prompt_pad_length: 512
+  fps: 7.0
+  stage1_future_indices:
+  - 4
+  - 8
+  - 12
+  - 16
+  - 20
+  - 24
+  - 28
+  - 32
+  - 36
+  - 40
+  simulation_fps: 24.0
+  start_sec: 0.0
+  max_latent_frames: 11
+  pad_rule: at_rest_hold_last(pad_to=41)
+stage1_data:
+  height: 160
+  width: 160
+model:
+  architecture: wan2.2-i2v-a14b
+  adapter_architecture: onlyflow
+  lora_rank: 32
+  lora_alpha: 32
+  boundary_sigma: 0.9
+  motion_condition_channels: 20
+  motion_condition_extra_channels: 7
+  adapter_hidden_channels: 128
+  adapter_depth: 2
+  adapter_levels: 3
+  adapter_heads: 8
+  adapter_mixer_rank: 128
+  injection_blocks:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  condition_interface: legacy27
+loss:
+  condition_weight: 0.0
+train:
+  per_gpu_batch: 1
+  grad_accum_steps: 4
+  num_workers: 2
+  max_steps: 1000
+  warmup_steps: 50
+  lora_learning_rate: 2.0e-05
+  adapter_learning_rate: 5.0e-05
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  save_every: 200
+  log_every: 10
+  gradient_checkpointing: true
+  flow_shift: 5.0
+evaluation:
+  inference_steps: 30
+  guidance_scale: 5.0
+provenance:
+  label_source: real_cotracker_v1
+  condition_scope: all_instances

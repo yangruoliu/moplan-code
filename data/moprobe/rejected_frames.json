@@ -1,0 +1,13 @@
+{
+ "note": "MoProbe-H frames removed after an item check of their prompt pair (an instruction that cannot be carried out from the first frame); applied by moprobe_h_rules.b_rows.",
+ "rejected": [
+  "ssv2_141557",
+  "ssv2_170067",
+  "ssv2_190079",
+  "ssv2_211294",
+  "ssv2_26647",
+  "ssv2_39264",
+  "ssv2_45362",
+  "ssv2_9578"
+ ]
+}

@@ -1,0 +1,133 @@
+{
+ "number": 3,
+ "id": "moprobe_paper_falls",
+ "folder": "03_moprobe_paper_falls",
+ "finding_group": "Confabulation",
+ "title": "Red wrapping paper falls onto a step (real scene)",
+ "caption": "The paper falls onto the steps; nobody is in the frame and the camera is fixed. The untrained Wan2.2 makes the paper grow larger and larger in the air until it flies into the camera; MoPlan lands it on a step, where it stays. (The real video is not available to us, so only two panels are shown.)",
+ "caption_source": "comparison page",
+ "benchmark": "MoProbe-P",
+ "benchmark_detail": "first frame from the PisaBench real split, clip 0096 (no person in view)",
+ "sample_ids": [
+  "ps032-pd"
+ ],
+ "sample_id_suffixes": {
+  "pd": "the source benchmark's own prompt"
+ },
+ "first_frame": {
+  "file": "first_frame.png",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "PisaBench real clip 0096, first frame, letterboxed onto a 1280x720 canvas",
+  "width": 1280,
+  "height": 720,
+  "attribution": "PisaBench real split (Chenyu Li, Oscar Michel, Xichen Pan, Sainan Liu, Mike Roberts and Saining Xie, arXiv:2503.09595), Hugging Face dataset nyu-visionx/pisa-experiments, Apache-2.0 as declared on its dataset card; modified: letterboxed onto a 1280x720 canvas"
+ },
+ "protocol": {
+  "name": "moprobe",
+  "frames": 37,
+  "fps": 7,
+  "frame_times": "k / 7 s for k = 0..36",
+  "width": 448,
+  "height": 256,
+  "image": "RGB, resized to 448x256 with LANCZOS (stretched, no crop). The input PNG is the source frame letterboxed onto a 1280x720 (16:9) canvas.",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "uint8 frames [37, 256, 448, 3]; the reference hashes are of these frames saved with numpy.save"
+ },
+ "seed_rule": "seed = 42 + (crc32(sample_id) mod 100000), seed index 0; both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "no_real_panel": true,
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "key": "base",
+      "position": "left",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "ps032-pd",
+      "prompt": "A red wrapping paper falls.",
+      "seed": 18084,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/03_moprobe_paper_falls/first_frame.png --prompt 'A red wrapping paper falls.' --sample-id ps032-pd --base --out out/showcase/03_moprobe_paper_falls/base.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "616fd8971be186a24c1a9b0ab6a5e24f65d4fd857c5ea5dc8d4effad621c0a45",
+       "bytes": 12730496
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "ps032-pd",
+      "prompt": "A red wrapping paper falls.",
+      "seed": 18084,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/03_moprobe_paper_falls/first_frame.png --prompt 'A red wrapping paper falls.' --sample-id ps032-pd --out out/showcase/03_moprobe_paper_falls/moplan.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "b207ae7ab7492ee9f0d8aff4e5d94d433373770ef15c6de3ac45a320e6b7fd60",
+       "bytes": 12730496
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are h264 exports of the reference frames; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "49480dfcb77c67d1493f2b9b6f709dc30d22dba2dc87abf77e60ede084bc34a2",
+   "bytes": 370816,
+   "width": 896,
+   "height": 256,
+   "frames": 37,
+   "fps": 7.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "09d48e90fcaaa179c2cff4d3100658bad4fa237d603e063da0e29b62355e5853",
+   "bytes": 46562,
+   "width": 896,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "5a3892f3740d1ce9946f381c93d0197f6d7e1f036190fa5b2fbaf9071959f4ad",
+   "bytes": 693119,
+   "width": 2070,
+   "height": 366
+  },
+  "first_frame": {
+   "path": "first_frame.png",
+   "sha256": "7984fcd9404acc8eaaac1a8b647235bb84a75d35aa475d902f0c7e416d1a1242",
+   "bytes": 1138861,
+   "width": 1280,
+   "height": 720
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol moprobe --image assets/showcase/03_moprobe_paper_falls/first_frame.png --prompt 'A red wrapping paper falls.' --sample-id ps032-pd --base --out out/showcase/03_moprobe_paper_falls/base.mp4",
+  "python generate.py --protocol moprobe --image assets/showcase/03_moprobe_paper_falls/first_frame.png --prompt 'A red wrapping paper falls.' --sample-id ps032-pd --out out/showcase/03_moprobe_paper_falls/moplan.mp4"
+ ]
+}

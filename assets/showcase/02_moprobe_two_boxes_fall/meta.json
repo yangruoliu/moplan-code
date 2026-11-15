@@ -1,0 +1,133 @@
+{
+ "number": 2,
+ "id": "moprobe_two_boxes_fall",
+ "folder": "02_moprobe_two_boxes_fall",
+ "finding_group": "Confabulation",
+ "title": "Two boxes fall at the same time (real scene)",
+ "caption": "Two boxes fall in a scene with no person and a fixed camera. The untrained Wan2.2 conjures a giant box that fills the frame while the camera moves; MoPlan keeps the camera fixed and the blue-and-white box lands on the floor. (The reference clip is not shown.)",
+ "caption_source": "comparison page",
+ "benchmark": "MoProbe-P",
+ "benchmark_detail": "first frame from the PisaBench real split, clip 0090 (no person in view)",
+ "sample_ids": [
+  "ps030-pd"
+ ],
+ "sample_id_suffixes": {
+  "pd": "the source benchmark's own prompt"
+ },
+ "first_frame": {
+  "file": "first_frame.png",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "PisaBench real clip 0090, first frame, letterboxed onto a 1280x720 canvas",
+  "width": 1280,
+  "height": 720,
+  "attribution": "PisaBench real split (Chenyu Li, Oscar Michel, Xichen Pan, Sainan Liu, Mike Roberts and Saining Xie, arXiv:2503.09595), Hugging Face dataset nyu-visionx/pisa-experiments, Apache-2.0 as declared on its dataset card; modified: letterboxed onto a 1280x720 canvas"
+ },
+ "protocol": {
+  "name": "moprobe",
+  "frames": 37,
+  "fps": 7,
+  "frame_times": "k / 7 s for k = 0..36",
+  "width": 448,
+  "height": 256,
+  "image": "RGB, resized to 448x256 with LANCZOS (stretched, no crop). The input PNG is the source frame letterboxed onto a 1280x720 (16:9) canvas.",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "uint8 frames [37, 256, 448, 3]; the reference hashes are of these frames saved with numpy.save"
+ },
+ "seed_rule": "seed = 42 + (crc32(sample_id) mod 100000), seed index 0; both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "no_real_panel": true,
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "key": "base",
+      "position": "left",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "ps030-pd",
+      "prompt": "A white box and a blue and white box fall at the same time.",
+      "seed": 55675,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/02_moprobe_two_boxes_fall/first_frame.png --prompt 'A white box and a blue and white box fall at the same time.' --sample-id ps030-pd --base --out out/showcase/02_moprobe_two_boxes_fall/base.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "18309bfec6d19b723a3d48e284dfc916489d69e6cae085b7d995f54c3c470020",
+       "bytes": 12730496
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "ps030-pd",
+      "prompt": "A white box and a blue and white box fall at the same time.",
+      "seed": 55675,
+      "command": "python generate.py --protocol moprobe --image assets/showcase/02_moprobe_two_boxes_fall/first_frame.png --prompt 'A white box and a blue and white box fall at the same time.' --sample-id ps030-pd --out out/showcase/02_moprobe_two_boxes_fall/moplan.mp4",
+      "reference": {
+       "kind": "numpy.save of uint8 frames [37, 256, 448, 3]",
+       "sha256": "9257da3c8a9413d23b7294e31073da5e9447e3ba859643de39b4403b664ebbaa",
+       "bytes": 12730496
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are h264 exports of the reference frames; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "41e9c19fb2b7fca246ceba040750c7b4538e1eb3e9eb63e684671b6b29164ea3",
+   "bytes": 315634,
+   "width": 896,
+   "height": 256,
+   "frames": 37,
+   "fps": 7.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "58a717f85e3aaa6aaba06120e25779eb11cf3133372dce22427008fb34371108",
+   "bytes": 32534,
+   "width": 896,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "ffd48df2138f494afa325931f3deb671903038d572d587ec1ae3ed5c6809ee31",
+   "bytes": 621220,
+   "width": 2070,
+   "height": 366
+  },
+  "first_frame": {
+   "path": "first_frame.png",
+   "sha256": "0e2e3078fd7548b6d9e5d6505350b3e8232fc6772ac3bf2a62d9abcfb8edb7e1",
+   "bytes": 855654,
+   "width": 1280,
+   "height": 720
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol moprobe --image assets/showcase/02_moprobe_two_boxes_fall/first_frame.png --prompt 'A white box and a blue and white box fall at the same time.' --sample-id ps030-pd --base --out out/showcase/02_moprobe_two_boxes_fall/base.mp4",
+  "python generate.py --protocol moprobe --image assets/showcase/02_moprobe_two_boxes_fall/first_frame.png --prompt 'A white box and a blue and white box fall at the same time.' --sample-id ps030-pd --out out/showcase/02_moprobe_two_boxes_fall/moplan.mp4"
+ ]
+}

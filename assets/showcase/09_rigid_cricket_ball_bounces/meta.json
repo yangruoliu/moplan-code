@@ -1,0 +1,134 @@
+{
+ "number": 9,
+ "id": "rigid_cricket_ball_bounces",
+ "folder": "09_rigid_cricket_ball_bounces",
+ "finding_group": "New results",
+ "title": "A cricket ball drops and bounces (rendered scene)",
+ "caption": "The untrained Wan2.2 lets the ball drift slowly down along the corner of the walls and reach the floor only at the end of the clip; MoPlan drops the ball to the floor, it bounces and then rolls slowly along the foot of the wall.",
+ "caption_source": "written for this release",
+ "benchmark": "RigidBench",
+ "benchmark_detail": "RigidBench evaluation sample 00059 (bounce), rendered scene",
+ "sample_ids": [
+  "rigid_00059"
+ ],
+ "first_frame": {
+  "file": "first_frame.png",
+  "faithful": "pixel-identical copy of the generation input (PNG text and EXIF chunks removed)",
+  "source": "RigidBench sample 00059, first frame (1280x704)",
+  "width": 1280,
+  "height": 704,
+  "attribution": "RigidBench evaluation set v1.1.0 (Swarnim Jain and Shangzhe Wu), https://doi.org/10.5281/zenodo.21649156, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); modified: PNG text and EXIF chunks removed, pixels unchanged"
+ },
+ "protocol": {
+  "name": "moprobe",
+  "frames": 17,
+  "fps": 7,
+  "frame_times": "k / 7 s for k = 0..16",
+  "width": 448,
+  "height": 256,
+  "image": "RGB, resized to 448x256 with LANCZOS (stretched, no crop, no letterbox)",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "17 uint8 frames [17, 256, 448, 3]"
+ },
+ "seed_rule": "seed = 42 + (crc32(sample_id) mod 100000), seed index 0; both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "prompt_note": "the generator prompt is the benchmark prompt followed by \" Static shot with no camera movement.\", which is appended when the benchmark text itself asks for a static camera",
+ "benchmark_prompt": "A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame.",
+ "no_real_panel": true,
+ "regeneration_note": "The reference hashes are of the 1280x704 mp4v evaluation exports, not of the files generate.py writes, so these two cases cannot be checked bit-for-bit with showcase.py verify; regeneration with generate.py has not been checked bit-for-bit.",
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "key": "base",
+      "position": "left",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "rigid_00059",
+      "prompt": "A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame. Static shot with no camera movement.",
+      "seed": 17198,
+      "command": "python generate.py --protocol moprobe --frames 17 --fps 7 --image assets/showcase/09_rigid_cricket_ball_bounces/first_frame.png --prompt 'A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame. Static shot with no camera movement.' --sample-id rigid_00059 --base --out out/showcase/09_rigid_cricket_ball_bounces/base.mp4",
+      "reference": {
+       "kind": "sha256 of the 1280x704 evaluation export of the 17 generated frames (mp4v, 7 fps)",
+       "export_sha256": "04c7ebfb87a4575497ad83aca533d9f0f42588ba79dad1cc9bc7c8a80b1594e5",
+       "verifiable": false,
+       "verifiable_note": "generate.py writes the 448x256 frame array (.npy) and an h264 mp4, not this 1280x704 mp4v export, and no hash of the 448x256 frame array is recorded for this panel; showcase.py verify reports it as NOT-VERIFIABLE"
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "rigid_00059",
+      "prompt": "A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame. Static shot with no camera movement.",
+      "seed": 17198,
+      "command": "python generate.py --protocol moprobe --frames 17 --fps 7 --image assets/showcase/09_rigid_cricket_ball_bounces/first_frame.png --prompt 'A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame. Static shot with no camera movement.' --sample-id rigid_00059 --out out/showcase/09_rigid_cricket_ball_bounces/moplan.mp4",
+      "reference": {
+       "kind": "sha256 of the 1280x704 evaluation export of the 17 generated frames (mp4v, 7 fps)",
+       "export_sha256": "c7138a809c2ab58c8dbf1f386d16dc96719df74a52073d8cd586ce4a762fa6aa",
+       "verifiable": false,
+       "verifiable_note": "generate.py writes the 448x256 frame array (.npy) and an h264 mp4, not this 1280x704 mp4v export, and no hash of the 448x256 frame array is recorded for this panel; showcase.py verify reports it as NOT-VERIFIABLE"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "two panels side by side (Wan2.2 left, MoPlan right), labels burned in, libx264, yuv420p",
+  "inputs": "the 17 generated frames of each model at 448x256",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "regenerate": [
+  "python generate.py --protocol moprobe --frames 17 --fps 7 --image assets/showcase/09_rigid_cricket_ball_bounces/first_frame.png --prompt 'A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame. Static shot with no camera movement.' --sample-id rigid_00059 --base --out out/showcase/09_rigid_cricket_ball_bounces/base.mp4",
+  "python generate.py --protocol moprobe --frames 17 --fps 7 --image assets/showcase/09_rigid_cricket_ball_bounces/first_frame.png --prompt 'A cricket ball is dropping. Static shot, locked-off camera, fixed tripod, stationary framing. No camera movement, no pan, no tilt, no zoom, no dolly, no drift, no handheld shake. Real-time playback at natural speed, 24 fps, no slow motion, no time-lapse. Realistic rigid-body physics: gravity, momentum, friction, and collisions consistent with reality. Photorealistic, continuous single take, no cuts. Motion begins on the first frame. Static shot with no camera movement.' --sample-id rigid_00059 --out out/showcase/09_rigid_cricket_ball_bounces/moplan.mp4"
+ ],
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "4f269bdf57682b3e9a9ec1bec4d85a1aefcfee93776501206464897488b8915c",
+   "bytes": 68741,
+   "width": 896,
+   "height": 256,
+   "frames": 20,
+   "fps": 7.368421052631579
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "617b7267264547fd8b46bda68a65c621f1c66f5546b827bd5216a4d95a1042e2",
+   "bytes": 34048,
+   "width": 896,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "3ec56376f71494c5dba95a1e0bcf2f082dde1b9e7808bc1136b3c55b0cfc4d12",
+   "bytes": 517001,
+   "width": 2070,
+   "height": 390
+  },
+  "first_frame": {
+   "path": "first_frame.png",
+   "sha256": "b1200e4fb34c4a9673a0d15f46ebb2f6eba84a2f7c8d2809832f95b3921fabef",
+   "bytes": 481945,
+   "width": 1280,
+   "height": 704
+  }
+ },
+ "run_note": "These two cases come from a separate RigidBench generation run with the settings in `protocol`: the Wan2.2 default negative prompt, and the benchmark prompt followed by the appended static-camera sentence (see prompt_note; this is what rigidbench_inputs.py writes without --exact-prompt). They are not from the official-protocol RigidBench evaluation in docs/EVALUATION.md, which uses the benchmark prompt verbatim (--exact-prompt) and RigidBench's official negative prompt."
+}

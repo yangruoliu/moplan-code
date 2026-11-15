@@ -1,0 +1,91 @@
+{
+ "repo_id": "yrlyrl/MoPlan",
+ "description": "MoPlan weights. Download with: hf download yrlyrl/MoPlan --revision b0db0e367f6508977ec9eca693ae3888c52be2dd --local-dir $MOPLAN_WEIGHTS",
+ "layout": {
+  "stage1/": "Stage-1 motion planner checkpoint (step 6000) + the direct-objective prior latent",
+  "stage2/high/": "final Stage-2 generator, high-noise expert (LoRA + motion adapter)",
+  "stage2/low/": "final Stage-2 generator, low-noise expert (LoRA + motion adapter)"
+ },
+ "base_model": {
+  "repo_id": "Wan-AI/Wan2.2-I2V-A14B-Diffusers",
+  "revision": "596658fd9ca6b7b71d5057529bbf319ecbc61d74",
+  "env": "WAN_MODEL_DIR",
+  "note": "not redistributed; Stage-1 uses its transformer/ (high-noise expert), vae/, text_encoder/, tokenizer/"
+ },
+ "files": [
+  {
+   "target": "stage1/backend_params.pt",
+   "size": 618208770,
+   "sha256": "be14419501b8885e66bc64e9ff4ab75d4bbcd6baeb1d17c0dbc0e5c309644884",
+   "required": true,
+   "content": "Stage-1 trainable backend parameters (LoRA r32 on the Wan2.2 high-noise expert, new input patch embedding, output layer)"
+  },
+  {
+   "target": "stage1/decoder.pt",
+   "size": 20464764,
+   "sha256": "94ad082dfb860234ac6ab5804168e26b13d0a7334c95afe2b5410afa4ca68c64",
+   "required": true,
+   "content": "Stage-1 slot decoder (16 slots)"
+  },
+  {
+   "target": "stage1/trainer_state.json",
+   "size": 5541,
+   "sha256": "dcc1ec053a9ecff35dad290ecffef6787a865e26e6068c93786ed20c785844eb",
+   "required": true,
+   "content": "training state of the checkpoint, unchanged; the loader reads decoder_config and expert from it"
+  },
+  {
+   "target": "stage1/resolved_config.yaml",
+   "size": 11924,
+   "sha256": "bcc375d0054f804eee9496335158af5fda1e6d7c65f95c778bbf95e2f27f0dff",
+   "required": true,
+   "content": "the checkpoint's resolved training config with every data path replaced by a relative placeholder and paths.wan_model left empty (set by --set paths.wan_model=... or $WAN_MODEL_DIR); all values the loader and sampler read are unchanged"
+  },
+  {
+   "target": "stage1/checkpoint_complete.json",
+   "size": 1102,
+   "sha256": "d595b15a056c71963cec3dbc9b356a2fb7fcd79e8885363807923f3508ccd5de",
+   "required": false,
+   "content": "completion marker of the training checkpoint, unchanged (provenance only; it also lists optimizer/scheduler/RNG files that are not released, and the sha256 of the original config)"
+  },
+  {
+   "target": "stage1/prior_latent.pt",
+   "size": 33973,
+   "sha256": "375b5d688df6e1a735fb7b11dae87075e24d051600404a407de17395bca83525",
+   "required": true,
+   "content": "{'prior_latent': fp16 [16, 32, 32]}: the init latent of the direct Stage-1 objective (slot 0 of a zero-motion flow-latent cache entry); pass with --prior-latent"
+  },
+  {
+   "target": "stage2/high/lora_params.pt",
+   "size": 613678850,
+   "sha256": "6a672f0e8604d004a3b21cfcf4bbe691cc3e3bbc04373790853e0988d16fad4b",
+   "required": true,
+   "content": "LoRA r32 / alpha 32 of the high-noise expert (800 tensors, peft key names)"
+  },
+  {
+   "target": "stage2/high/motion_adapter.pt",
+   "size": 235892827,
+   "sha256": "160833f98f580b5206fbd52aa0e0e94b6f7b81e87428b56669f8bea5a3fa7d31",
+   "required": true,
+   "content": "motion adapter of the high-noise expert (ExtendedOnlyFlowAdapter, 20 + 7 condition channels)"
+  },
+  {
+   "target": "stage2/low/lora_params.pt",
+   "size": 613678850,
+   "sha256": "dde80106ebec9e2849cd6d5fe1a6122f7f9ef91d838c88093e87adf4d46e096f",
+   "required": true,
+   "content": "LoRA r32 / alpha 32 of the low-noise expert (800 tensors, peft key names)"
+  },
+  {
+   "target": "stage2/low/motion_adapter.pt",
+   "size": 235892827,
+   "sha256": "b0e4e965969231cdec7c2f3f42fe963e3a836cd950dc5432d1e212e2d1141e10",
+   "required": true,
+   "content": "motion adapter of the low-noise expert (ExtendedOnlyFlowAdapter, 20 + 7 condition channels)"
+  }
+ ],
+ "not_released": [
+  "Stage-1 optimizer.pt / scheduler.pt / rng_state.pt (not needed for inference)",
+  "Stage-2 trainer_state.json / train_overrides.json (training bookkeeping, not read by inference)"
+ ]
+}

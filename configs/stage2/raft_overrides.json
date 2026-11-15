@@ -1,0 +1,19 @@
+{
+ "_about": "Training recipe of the light RAFT round (both experts, 300 steps each, from the GT-SFT generator at step 4000). launch/raft.sh resolves the placeholders, drops the keys starting with '_' and writes the result to <work>/train/OVERRIDES.json, which scripts/train_s2_v4.py reads.",
+ "_placeholders": "{repo_root} = the repository root; {sft_data} = $MOPLAN_SFT_DATA (GT-SFT payloads under pools/{p101,ssv2,phyco}/); {raft_data} = $MOPLAN_RAFT_DATA (the RAFT condition caches cache_{phyco,phycoB,p101,p101B}/); {sft_checkpoint} = $MOPLAN_SFT_CHECKPOINT (high/ and low/ of the GT-SFT generator); {winners} = the folder with every selected candidate <sample_id>.pt; {expert} = high or low, substituted by the trainer.",
+ "_replay": "The seven GT-SFT pools and their mix are the replay data (the mix of the GT-SFT run). The raft_* pools are not in the mix: they only hold the conditions the candidates were sampled under, and each selected candidate is trained under the condition of its own pool. dpo_prob is the share of micro-steps that train on a selected candidate; dpo_negative_weight 0 with dpo_sft_weight 1 means plain flow matching on the candidate (no preference term, no reference model).",
+ "pools": "p_fall={sft_data}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_fall.txt,p_ramp={sft_data}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_ramp.txt,p_spring={sft_data}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_spring.txt,p_multi={sft_data}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_multi.txt,p_liquid={sft_data}/pools/p101@{repo_root}/data/ids/stage2_sft/train/p_liquid.txt,ssv2={sft_data}/pools/ssv2@{repo_root}/data/ids/stage2_sft/train/ssv2.txt,phyco={sft_data}/pools/phyco@{repo_root}/data/ids/stage2_sft/train/phyco.txt,raft_phyco={raft_data}/cache_phyco@{repo_root}/data/ids/raft/ids_phyco.txt,raft_p101={raft_data}/cache_p101@{repo_root}/data/ids/raft/ids_p101_rl.txt,raft_phycoB={raft_data}/cache_phycoB@{repo_root}/data/ids/raft/ids_phycoB.txt,raft_p101B={raft_data}/cache_p101B@{repo_root}/data/ids/raft/ids_p101B.txt",
+ "mix": "p_fall:real:0.09640,p_ramp:real:0.27855,p_spring:real:0.03828,p_multi:real:0.05524,p_liquid:real:0.03152,ssv2:real:0.10000,phyco:real:0.40000",
+ "fm_weight_mode": "tube",
+ "max_latent_frames": 11,
+ "init_from": "{sft_checkpoint}/{expert}",
+ "max_steps": 300,
+ "save_every": 100,
+ "log_every": 10,
+ "seed": 20261020,
+ "dpo_pairs": "{winners}",
+ "dpo_prob": 0.5,
+ "dpo_beta": 2000.0,
+ "dpo_sft_weight": 1.0,
+ "dpo_negative_weight": 0.0
+}

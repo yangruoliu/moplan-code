@@ -1,0 +1,791 @@
+{
+ "_doc": "SSv2 template → MoProbe roles and instruction patterns. Placeholders A,B,C follow the template's [something] order. actor/patient are placeholder indices (0-based) or 'hand'. direction_expected: screen-space expectation for the actor (right, left, up, down, toward_B, away_B, none, any). static_caption: the instruction describes an event in which the named object must NOT move. neutral = Physics-IQ style (scene + subject + initial action, no outcome words); explicit = adds direction/outcome words (used by T2 only).",
+ "templates": {
+  "8": {
+   "event": "drop",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand holds {A} above {B} and lets go of it.",
+   "explicit": "A hand drops {A}; it falls down behind {B}."
+  },
+  "9": {
+   "event": "drop",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand holds {A} up in front of {B} and lets go of it.",
+   "explicit": "A hand drops {A}; it falls straight down in front of {B}."
+  },
+  "10": {
+   "event": "drop_into",
+   "actor": 0,
+   "patient": 1,
+   "dir": "down",
+   "neutral": "A hand holds {A} above {B} and lets go of it.",
+   "explicit": "A hand drops {A} into {B}."
+  },
+  "11": {
+   "event": "drop",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand holds {A} up next to {B} and lets go of it.",
+   "explicit": "A hand drops {A}; it falls down next to {B}."
+  },
+  "12": {
+   "event": "drop_onto",
+   "actor": 0,
+   "patient": 1,
+   "dir": "down",
+   "neutral": "A hand holds {A} above {B} and lets go of it.",
+   "explicit": "A hand drops {A} onto {B}."
+  },
+  "28": {
+   "event": "lift_drop",
+   "actor": 0,
+   "patient": null,
+   "dir": "up_then_down",
+   "neutral": "A hand lifts {A} off the surface and then releases it.",
+   "explicit": "A hand lifts {A} up completely and then lets it drop down."
+  },
+  "31": {
+   "event": "lift_end_drop",
+   "actor": 0,
+   "patient": null,
+   "dir": "up_then_down",
+   "neutral": "A hand lifts one end of {A} and then releases it.",
+   "explicit": "A hand lifts up one end of {A} and then lets it drop down."
+  },
+  "34": {
+   "event": "push_off_edge",
+   "actor": 0,
+   "patient": null,
+   "dir": "any_then_down",
+   "neutral": "A hand pushes {A} across the surface toward its edge.",
+   "explicit": "A hand moves {A} across the surface until it falls off the edge."
+  },
+  "95": {
+   "event": "push_off",
+   "actor": 0,
+   "patient": 1,
+   "dir": "any_then_down",
+   "neutral": "A hand pushes {A}, which rests on {B}, toward the edge of {B}.",
+   "explicit": "A hand pushes {A} off of {B}; it falls down."
+  },
+  "99": {
+   "event": "push_off_table",
+   "actor": 0,
+   "patient": null,
+   "dir": "any_then_down",
+   "neutral": "A hand pushes {A} across the table toward its edge.",
+   "explicit": "A hand pushes {A} so that it falls off the table."
+  },
+  "110": {
+   "event": "unsupported_fall",
+   "actor": 0,
+   "patient": 1,
+   "dir": "down",
+   "neutral": "A hand places {A} on the very edge of {B} and lets go.",
+   "explicit": "A hand puts {A} on the edge of {B} where it is not supported, and it falls down."
+  },
+  "113": {
+   "event": "unsupported_fall",
+   "actor": 0,
+   "patient": 1,
+   "dir": "down",
+   "neutral": "A hand places {A} on top of {B} and lets go.",
+   "explicit": "A hand puts {A} onto {B}, which cannot support it, so {A} falls down."
+  },
+  "117": {
+   "event": "topple",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A hand stands {A} upright on the table and lets go.",
+   "explicit": "A hand puts {A} upright on the table; it cannot stand and falls on its side."
+  },
+  "135": {
+   "event": "fall_rock",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand releases {A} in mid-air.",
+   "explicit": "{A} falls straight down like a rock."
+  },
+  "151": {
+   "event": "throw",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A hand holds {A} and starts a throwing motion.",
+   "explicit": "A hand throws {A} away across the frame."
+  },
+  "154": {
+   "event": "throw_up_fall",
+   "actor": 0,
+   "patient": null,
+   "dir": "up_then_down",
+   "neutral": "A hand holds {A} and starts an upward throwing motion.",
+   "explicit": "A hand throws {A} up in the air and lets it fall back down."
+  },
+  "155": {
+   "event": "throw_onto",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A hand holds {A} above the surface and starts a throwing motion.",
+   "explicit": "A hand throws {A} onto the surface."
+  },
+  "22": {
+   "event": "roll_flat",
+   "actor": 0,
+   "patient": null,
+   "dir": "any_horizontal",
+   "neutral": "A hand gives {A} a push on the flat surface and lets go.",
+   "explicit": "A hand lets {A} roll along the flat surface."
+  },
+  "23": {
+   "event": "roll_down_ramp",
+   "actor": 0,
+   "patient": null,
+   "dir": "down_slope",
+   "neutral": "A hand places {A} on the slanted surface and lets go.",
+   "explicit": "A hand lets {A} roll down the slanted surface."
+  },
+  "24": {
+   "event": "roll_up_back",
+   "actor": 0,
+   "patient": null,
+   "dir": "up_slope_then_back",
+   "neutral": "A hand pushes {A} up the slanted surface and lets go.",
+   "explicit": "A hand lets {A} roll up the slanted surface, and it rolls back down."
+  },
+  "122": {
+   "event": "roll_flat",
+   "actor": "hand",
+   "patient": 0,
+   "dir": "any_horizontal",
+   "neutral": "A hand pushes {A} along the flat surface.",
+   "explicit": "A hand rolls {A} on the flat surface."
+  },
+  "26": {
+   "event": "slide_down_lifted",
+   "actor": 1,
+   "patient": null,
+   "dir": "down_slope",
+   "neutral": "A hand lifts one side of {A} with {B} resting on it.",
+   "explicit": "A hand lifts {A} with {B} on it until {B} starts sliding down."
+  },
+  "115": {
+   "event": "slide_down_ramp",
+   "actor": 0,
+   "patient": null,
+   "dir": "down_slope",
+   "neutral": "A hand places {A} on the slanted surface and lets go.",
+   "explicit": "A hand puts {A} on the slanted surface and it slides down."
+  },
+  "86": {
+   "event": "pull_lr",
+   "actor": 0,
+   "patient": null,
+   "dir": "right",
+   "neutral": "A hand grips {A} on the left side of the frame and starts pulling it.",
+   "explicit": "A hand pulls {A} from left to right."
+  },
+  "87": {
+   "event": "pull_rl",
+   "actor": 0,
+   "patient": null,
+   "dir": "left",
+   "neutral": "A hand grips {A} on the right side of the frame and starts pulling it.",
+   "explicit": "A hand pulls {A} from right to left."
+  },
+  "93": {
+   "event": "push_lr",
+   "actor": 0,
+   "patient": null,
+   "dir": "right",
+   "neutral": "A hand touches {A} on its left side and starts pushing it.",
+   "explicit": "A hand pushes {A} from left to right."
+  },
+  "94": {
+   "event": "push_rl",
+   "actor": 0,
+   "patient": null,
+   "dir": "left",
+   "neutral": "A hand touches {A} on its right side and starts pushing it.",
+   "explicit": "A hand pushes {A} from right to left."
+  },
+  "45": {
+   "event": "move_up",
+   "actor": 0,
+   "patient": null,
+   "dir": "up",
+   "neutral": "A hand holds {A} and starts raising it.",
+   "explicit": "A hand moves {A} up."
+  },
+  "43": {
+   "event": "move_down",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand holds {A} and starts lowering it.",
+   "explicit": "A hand moves {A} down."
+  },
+  "27": {
+   "event": "lift_hold",
+   "actor": 0,
+   "patient": null,
+   "dir": "up",
+   "neutral": "A hand lifts {A} off the surface.",
+   "explicit": "A hand lifts {A} up completely without letting it drop down."
+  },
+  "153": {
+   "event": "throw_catch",
+   "actor": 0,
+   "patient": null,
+   "dir": "up_then_down",
+   "neutral": "A hand holds {A} and starts an upward throwing motion.",
+   "explicit": "A hand throws {A} in the air and catches it."
+  },
+  "55": {
+   "event": "poke_move",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A finger reaches {A} and pokes it.",
+   "explicit": "A finger pokes {A} so it slightly moves."
+  },
+  "57": {
+   "event": "poke_topple",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A finger reaches {A} and pokes it.",
+   "explicit": "A finger pokes {A} so that it falls over."
+  },
+  "100": {
+   "event": "push_slight",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A hand touches {A} and gives it a gentle push.",
+   "explicit": "A hand pushes {A} so that it slightly moves."
+  },
+  "158": {
+   "event": "tip_over",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A hand touches the top of {A} and starts tilting it.",
+   "explicit": "A hand tips {A} over."
+  },
+  "58": {
+   "event": "poke_spin",
+   "actor": 0,
+   "patient": null,
+   "dir": "spin",
+   "neutral": "A finger reaches {A} and pokes its edge.",
+   "explicit": "A finger pokes {A} so that it spins around."
+  },
+  "139": {
+   "event": "spin_continue",
+   "actor": 0,
+   "patient": null,
+   "dir": "spin",
+   "neutral": "A hand gives {A} a twist and lets go.",
+   "explicit": "A hand spins {A} so it continues spinning."
+  },
+  "140": {
+   "event": "spin_stop",
+   "actor": 0,
+   "patient": null,
+   "dir": "spin",
+   "neutral": "A hand gives {A} a twist and lets go.",
+   "explicit": "A hand spins {A}; it quickly stops spinning."
+  },
+  "134": {
+   "event": "fall_feather",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "rigid": false,
+   "neutral": "A hand releases {A} in mid-air.",
+   "explicit": "{A} drifts down slowly like a feather or paper."
+  },
+  "2": {
+   "event": "bend",
+   "actor": 0,
+   "patient": null,
+   "dir": "none",
+   "rigid": false,
+   "neutral": "Two hands hold {A} and start bending it.",
+   "explicit": "Hands bend {A} so that it deforms."
+  },
+  "14": {
+   "event": "fold",
+   "actor": 0,
+   "patient": null,
+   "dir": "none",
+   "rigid": false,
+   "neutral": "Hands hold {A} flat on the surface and start folding it.",
+   "explicit": "Hands fold {A}."
+  },
+  "38": {
+   "event": "collide",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "Two hands hold {A} and {B} apart and start moving them.",
+   "explicit": "{A} and {B} are moved so that they collide with each other."
+  },
+  "39": {
+   "event": "pass",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "Two hands hold {A} and {B} apart and start moving them.",
+   "explicit": "{A} and {B} are moved so that they pass each other without touching."
+  },
+  "36": {
+   "event": "separate",
+   "actor": 0,
+   "patient": 1,
+   "dir": "away_B",
+   "neutral": "Two hands hold {A} and {B} close together and start moving them.",
+   "explicit": "{A} and {B} are moved away from each other."
+  },
+  "37": {
+   "event": "approach",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "Two hands hold {A} and {B} apart and start moving them.",
+   "explicit": "{A} and {B} are moved closer to each other."
+  },
+  "40": {
+   "event": "move_away",
+   "actor": 0,
+   "patient": 1,
+   "dir": "away_B",
+   "neutral": "A hand holds {A} next to {B} and starts moving it.",
+   "explicit": "A hand moves {A} away from {B}; {B} stays where it is."
+  },
+  "42": {
+   "event": "move_closer",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "A hand holds {A} at a distance from {B} and starts moving it.",
+   "explicit": "A hand moves {A} closer to {B}; {B} stays where it is."
+  },
+  "131": {
+   "event": "deflect",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "{A} is sent moving toward {B}.",
+   "explicit": "{A} hits {B} and is deflected off it; {B} stays in place."
+  },
+  "132": {
+   "event": "collide_deflect",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "{A} and {B} are sent moving toward each other.",
+   "explicit": "{A} collides with {B} and both are deflected."
+  },
+  "133": {
+   "event": "collide_halt",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "{A} and {B} are sent moving toward each other.",
+   "explicit": "{A} collides with {B} and both come to a halt."
+  },
+  "15": {
+   "event": "hit_with",
+   "actor": 1,
+   "patient": 0,
+   "dir": "toward_A",
+   "neutral": "A hand holds {B} above {A} and starts swinging it.",
+   "explicit": "A hand hits {A} with {B}."
+  },
+  "96": {
+   "event": "push_onto",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "A hand touches {A} next to {B} and starts pushing it.",
+   "explicit": "A hand pushes {A} onto {B}."
+  },
+  "152": {
+   "event": "throw_against",
+   "actor": 0,
+   "patient": 1,
+   "dir": "toward_B",
+   "neutral": "A hand holds {A} facing {B} and starts a throwing motion.",
+   "explicit": "A hand throws {A} against {B}."
+  },
+  "56": {
+   "event": "poke_nothing",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A finger reaches {A} and touches it very lightly.",
+   "explicit": "A finger pokes {A} so lightly that it does not move."
+  },
+  "90": {
+   "event": "pull_nothing",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "Two hands grip the two ends of {A}.",
+   "explicit": "Two hands pull the two ends of {A}, but nothing happens."
+  },
+  "160": {
+   "event": "touch_nothing",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand reaches {A} and rests a finger on part of it.",
+   "explicit": "A hand touches part of {A} without moving it."
+  },
+  "161": {
+   "event": "attach_fail",
+   "actor": null,
+   "patient": 1,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand presses {A} against {B}.",
+   "explicit": "A hand tries to attach {A} to {B}, but it does not stick and {B} does not move."
+  },
+  "162": {
+   "event": "bend_fail",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "Two hands grip {A} and press on it.",
+   "explicit": "Hands try to bend {A}, which is unbendable, so nothing happens."
+  },
+  "25": {
+   "event": "lift_no_slide",
+   "actor": 0,
+   "patient": 1,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand lifts one side of {A} slightly, with {B} resting on it.",
+   "explicit": "A hand lifts {A} with {B} on it, but not enough for {B} to slide down."
+  },
+  "111": {
+   "event": "ramp_no_glide",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand places {A} on the slanted surface and lets go.",
+   "explicit": "A hand puts {A} on the slanted surface, and it stays where it is."
+  },
+  "116": {
+   "event": "ramp_no_slide",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand places {A} on the slanted surface and lets go.",
+   "explicit": "A hand puts {A} on the slanted surface, and it stays where it is."
+  },
+  "54": {
+   "event": "poke_stack_nothing",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A finger reaches the stack of {A} and touches it.",
+   "explicit": "A finger pokes the stack of {A} without the stack collapsing."
+  },
+  "35": {
+   "event": "move_no_fall",
+   "actor": 0,
+   "patient": null,
+   "dir": "any_horizontal",
+   "neutral": "A hand pushes {A} across the surface.",
+   "explicit": "A hand moves {A} across the surface without it falling down."
+  },
+  "98": {
+   "event": "push_almost_off",
+   "actor": 0,
+   "patient": null,
+   "dir": "any_horizontal",
+   "neutral": "A hand pushes {A} across the table toward its edge.",
+   "explicit": "A hand pushes {A} so that it almost falls off the table but does not."
+  },
+  "108": {
+   "event": "put_no_roll",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand places {A} on the flat surface and lets go.",
+   "explicit": "A hand puts {A} on the flat surface without letting it roll."
+  },
+  "68": {
+   "event": "pretend_pick_up",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand reaches {A} and closes around it.",
+   "explicit": "A hand pretends to pick up {A}, but {A} stays on the surface."
+  },
+  "69": {
+   "event": "pretend_poke",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A finger approaches {A}.",
+   "explicit": "A finger pretends to poke {A} without touching it; {A} does not move."
+  },
+  "83": {
+   "event": "pretend_throw",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand holds {A} and starts a throwing motion.",
+   "explicit": "A hand pretends to throw {A} but keeps holding it."
+  },
+  "72": {
+   "event": "pretend_put_into",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand holds {A} above {B}.",
+   "explicit": "A hand pretends to put {A} into {B} but keeps holding it; {B} does not move."
+  },
+  "75": {
+   "event": "pretend_put_onto",
+   "actor": null,
+   "patient": 0,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand holds {A} above {B}.",
+   "explicit": "A hand pretends to put {A} onto {B} but keeps holding it; {B} does not move."
+  },
+  "156": {
+   "event": "tilt_no_fall",
+   "actor": 0,
+   "patient": 1,
+   "dir": "none",
+   "static_caption": true,
+   "neutral": "A hand tilts {A} slightly, with {B} resting on it.",
+   "explicit": "A hand tilts {A} with {B} on it slightly so that {B} does not fall down."
+  },
+  "157": {
+   "event": "tilt_fall",
+   "actor": 1,
+   "patient": null,
+   "dir": "down_slope",
+   "neutral": "A hand tilts {A}, with {B} resting on it.",
+   "explicit": "A hand tilts {A} with {B} on it until {B} falls off."
+  },
+  "159": {
+   "event": "tip_spill",
+   "actor": 1,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand tilts {A}, which has {B} inside it.",
+   "explicit": "A hand tips {A} with {B} in it over, so {B} falls out."
+  },
+  "97": {
+   "event": "push_spin",
+   "actor": 0,
+   "patient": null,
+   "dir": "spin",
+   "neutral": "A hand pushes the edge of {A}.",
+   "explicit": "A hand pushes {A} so it spins."
+  },
+  "53": {
+   "event": "poke_stack_collapse",
+   "actor": 0,
+   "patient": null,
+   "dir": "any",
+   "neutral": "A finger reaches the stack of {A} and pokes it.",
+   "explicit": "A finger pokes the stack of {A} so the stack collapses."
+  },
+  "30": {
+   "event": "lift_end_hold",
+   "actor": 0,
+   "patient": null,
+   "dir": "up",
+   "neutral": "A hand lifts one end of {A}.",
+   "explicit": "A hand lifts up one end of {A} without letting it drop down."
+  },
+  "109": {
+   "event": "put_down",
+   "actor": 0,
+   "patient": null,
+   "dir": "down",
+   "neutral": "A hand holds {A} above the surface and starts lowering it.",
+   "explicit": "A hand puts {A} down on the surface."
+  },
+  "112": {
+   "event": "put_onto",
+   "actor": 0,
+   "patient": 1,
+   "dir": "down",
+   "neutral": "A hand holds {A} above {B}.",
+   "explicit": "A hand puts {A} down onto {B}."
+  },
+  "29": {
+   "event": "lift_with_load",
+   "actor": 0,
+   "patient": null,
+   "dir": "up",
+   "neutral": "A hand holds {A}, with {B} resting on it.",
+   "explicit": "A hand lifts {A} up, with {B} resting on it."
+  }
+ },
+ "counterfactual_pairs": {
+  "_doc": "Same first frame, alternative instruction. For each listed template the 'alt' instruction is written for the same frame; the alt item has no reference video unless the pair is a natural SSv2 sibling.",
+  "93": {
+   "alt_template": "94",
+   "kind": "direction_flip"
+  },
+  "94": {
+   "alt_template": "93",
+   "kind": "direction_flip"
+  },
+  "86": {
+   "alt_template": "87",
+   "kind": "direction_flip"
+  },
+  "87": {
+   "alt_template": "86",
+   "kind": "direction_flip"
+  },
+  "45": {
+   "alt_template": "43",
+   "kind": "direction_flip_vertical"
+  },
+  "43": {
+   "alt_template": "45",
+   "kind": "direction_flip_vertical"
+  },
+  "27": {
+   "alt_template": "28",
+   "kind": "hold_vs_release"
+  },
+  "28": {
+   "alt_template": "27",
+   "kind": "hold_vs_release"
+  },
+  "115": {
+   "alt_template": "116",
+   "kind": "event_vs_nothing"
+  },
+  "116": {
+   "alt_template": "115",
+   "kind": "event_vs_nothing"
+  },
+  "23": {
+   "alt_template": "111",
+   "kind": "event_vs_nothing"
+  },
+  "26": {
+   "alt_template": "25",
+   "kind": "event_vs_nothing"
+  },
+  "25": {
+   "alt_template": "26",
+   "kind": "event_vs_nothing"
+  },
+  "157": {
+   "alt_template": "156",
+   "kind": "event_vs_nothing"
+  },
+  "156": {
+   "alt_template": "157",
+   "kind": "event_vs_nothing"
+  },
+  "99": {
+   "alt_template": "98",
+   "kind": "event_vs_nothing"
+  },
+  "98": {
+   "alt_template": "99",
+   "kind": "event_vs_nothing"
+  },
+  "57": {
+   "alt_template": "56",
+   "kind": "event_vs_nothing"
+  },
+  "56": {
+   "alt_template": "57",
+   "kind": "event_vs_nothing"
+  },
+  "53": {
+   "alt_template": "54",
+   "kind": "event_vs_nothing"
+  },
+  "54": {
+   "alt_template": "53",
+   "kind": "event_vs_nothing"
+  },
+  "40": {
+   "alt_template": "42",
+   "kind": "relation_flip"
+  },
+  "42": {
+   "alt_template": "40",
+   "kind": "relation_flip"
+  },
+  "36": {
+   "alt_template": "37",
+   "kind": "relation_flip"
+  },
+  "37": {
+   "alt_template": "36",
+   "kind": "relation_flip"
+  },
+  "15": {
+   "alt": "A hand hits {B} with {A}.",
+   "kind": "role_swap"
+  },
+  "131": {
+   "alt": "{B} is sent moving toward {A}; {A} stays in place.",
+   "kind": "role_swap"
+  },
+  "96": {
+   "alt": "A hand pushes {B} onto {A}.",
+   "kind": "role_swap"
+  },
+  "152": {
+   "alt": "A hand throws {B} against {A}.",
+   "kind": "role_swap"
+  },
+  "12": {
+   "alt": "A hand holds {A} above {B} and keeps holding it; nothing moves.",
+   "kind": "event_vs_nothing"
+  },
+  "10": {
+   "alt": "A hand holds {A} above {B} and keeps holding it; nothing moves.",
+   "kind": "event_vs_nothing"
+  },
+  "135": {
+   "alt": "A hand holds {A} in mid-air and keeps holding it still.",
+   "kind": "event_vs_nothing"
+  },
+  "22": {
+   "alt": "A hand places {A} on the flat surface and it stays where it is.",
+   "kind": "event_vs_nothing"
+  }
+ }
+}

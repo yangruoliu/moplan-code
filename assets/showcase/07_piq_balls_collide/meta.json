@@ -1,0 +1,151 @@
+{
+ "number": 7,
+ "id": "piq_balls_collide",
+ "folder": "07_piq_balls_collide",
+ "finding_group": "Physics-IQ qualitative",
+ "title": "Two balls collide and separate (Physics-IQ)",
+ "caption": "In the real video the blue ball rolls to the lower left and the yellow ball to the upper right after the collision. The untrained Wan2.2 makes the yellow ball jump to the lower-left corner and back; MoPlan separates the two balls along the real directions.",
+ "caption_source": "comparison page",
+ "benchmark": "Physics-IQ Verified",
+ "benchmark_detail": "scenario 0031 (balls-collide, left view), best-practice description prompt",
+ "sample_ids": [
+  "0031_perspective-left_trimmed-balls-collide"
+ ],
+ "first_frame": {
+  "file": "first_frame.jpg",
+  "faithful": "byte-identical copy of the generation input",
+  "source": "Physics-IQ switch frame switch-frames/0031_switch-frames_anyFPS_perspective-left_trimmed-balls-collide.jpg, as used by the Physics-IQ Verified evaluation; byte-identical (same sha256) to the file of the same name in the original public Physics-IQ release, gs://physics-iq-benchmark/switch-frames/",
+  "width": 3840,
+  "height": 2160,
+  "public_release_file": "gs://physics-iq-benchmark/switch-frames/0031_switch-frames_anyFPS_perspective-left_trimmed-balls-collide.jpg",
+  "public_release_sha256": "7bb37bd4fedd4013f3d137a2f9edcbb440e456c7a617a1b6c2fea4db525566de",
+  "attribution": "Physics-IQ, Copyright 2024 DeepMind Technologies Limited, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); unmodified"
+ },
+ "prompt_source": "physics-IQ-benchmark descriptions/best_practice/descriptions_base.csv",
+ "protocol": {
+  "name": "physics_iq",
+  "frames": 41,
+  "frames_kept": 40,
+  "fps": 8,
+  "frame_times": "k / 8 s for k = 0..40",
+  "width": 448,
+  "height": 256,
+  "image": "the 3840x2160 Physics-IQ switch frame (the original public release file, also used by Physics-IQ Verified), RGB, resized to 448x256 with LANCZOS",
+  "sampler": {
+   "scheduler": "UniPCMultistepScheduler of the Wan2.2 pipeline (flow shift 3.0)",
+   "steps": 30,
+   "guidance_scale": 5.0,
+   "guidance_note": "the same scale is used for the high-noise and the low-noise expert",
+   "boundary_ratio": 0.9,
+   "negative_prompt": "the official Wan2.2 negative prompt",
+   "text_max_sequence_length": 512,
+   "dtype": "bf16 transformers, fp32 VAE"
+  },
+  "output": "41 frames written with imageio (libx264, quality 8) at 8 fps (raw), then trimmed to the first 5 s with ffmpeg -t 5 (trimmed); the composite shows the trimmed clip"
+ },
+ "seed_rule": "seed = 42 for every Physics-IQ video (run 1); both models use the same seed; the noise comes from torch.Generator('cuda').manual_seed(seed)",
+ "layout": {
+  "rows": [
+   {
+    "row": null,
+    "title": null,
+    "panels": [
+     {
+      "position": "left",
+      "label": "Real video",
+      "arm": "real",
+      "source": {
+       "dataset": "Physics-IQ (original release), take 1, 30 fps",
+       "file": "full-videos/take-1/30FPS/0031_full-videos_30FPS_perspective-left_take-1_trimmed-balls-collide.mp4",
+       "start_seconds": 3.0,
+       "sha256": "d96b1342decb025b2b11b0ce9d2f217fed0ca5f32fc3b4b62ce1081d57e212c5",
+       "public_release_file": "gs://physics-iq-benchmark/full-videos/take-1/30FPS/0031_full-videos_30FPS_perspective-left_take-1_trimmed-balls-collide.mp4",
+       "public_release_check": "sha256 identical to the file in the original public Physics-IQ release"
+      },
+      "display": "the recorded continuation from the switch frame (3.0 s), resampled to 8 fps and scaled to 448x256"
+     },
+     {
+      "key": "base",
+      "position": "middle",
+      "label": "Wan2.2 (untrained, same seed)",
+      "arm": "base",
+      "model": "untrained Wan2.2-I2V-A14B (Diffusers weights in $WAN_MODEL_DIR), same pipeline without LoRA, adapter or motion condition",
+      "sample_id": "0031_perspective-left_trimmed-balls-collide",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --base --out out/showcase/07_piq_balls_collide/base.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "4c61d453cbd6fbb566d0fda148fff9b06b291569006f93893cf792389da23701",
+       "raw_mp4_bytes": 798271,
+       "trimmed_mp4_sha256": "5fb7df3f2358151c765320d4f5ed3e062c6d24a6a7769d462a4a0c5ee2cea17b",
+       "trimmed_mp4_bytes": 64290
+      }
+     },
+     {
+      "key": "moplan",
+      "position": "right",
+      "label": "MoPlan (ours)",
+      "arm": "moplan",
+      "model": "MoPlan final model: Stage-1 motion predictor ($MOPLAN_WEIGHTS/stage1) and the Stage-2 generator (LoRA and motion adapter on both Wan2.2 experts, $MOPLAN_WEIGHTS/stage2/{high,low})",
+      "sample_id": "0031_perspective-left_trimmed-balls-collide",
+      "prompt": "Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.",
+      "seed": 42,
+      "command": "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --out out/showcase/07_piq_balls_collide/moplan.mp4",
+      "reference": {
+       "kind": "raw = 41-frame mp4 before trimming, trimmed = 40-frame mp4 (first 5 s)",
+       "raw_mp4_sha256": "7dab780a04b1d1cce69dc6839b34328bc37fa1444e0bcc812c642c76dcaaebb3",
+       "raw_mp4_bytes": 648617,
+       "trimmed_mp4_sha256": "eec3db6f91e6262e6f17f3662db714daca58a5db8e6608db007b1edceded3d8a",
+       "trimmed_mp4_bytes": 49585
+      }
+     }
+    ]
+   }
+  ],
+  "panel_width": 448,
+  "panel_height": 256
+ },
+ "composite": {
+  "file": "comparison.mp4",
+  "encoding": "panels stacked side by side (rows stacked vertically), labels burned in, libx264 crf 24, yuv420p",
+  "inputs": "the generated panels are the trimmed reference mp4 files; the real panel is the source video",
+  "reproducibility": "the composite is a re-encode with burned-in labels and is not byte-reproducible; compare regenerated panels with the per-panel references instead"
+ },
+ "files": {
+  "video": {
+   "path": "comparison.mp4",
+   "sha256": "62f720604008c7cb50479b39fccb5c6e5a97c14cc8620340bbdae0901daceda3",
+   "bytes": 125938,
+   "width": 1344,
+   "height": 256,
+   "frames": 39,
+   "fps": 8.0
+  },
+  "poster": {
+   "path": "poster.jpg",
+   "sha256": "dab1f5e666098ebb421a234e79df52d337c05415c484b4fa9f968f4a667f90a7",
+   "bytes": 31885,
+   "width": 1344,
+   "height": 256
+  },
+  "strip": {
+   "path": "strip.png",
+   "sha256": "d8b2ddb5988b73d70ccf53a22787b2fbed9dedf44cae03cc317e6ad54156a2e7",
+   "bytes": 989096,
+   "width": 2070,
+   "height": 549
+  },
+  "first_frame": {
+   "path": "first_frame.jpg",
+   "sha256": "7bb37bd4fedd4013f3d137a2f9edcbb440e456c7a617a1b6c2fea4db525566de",
+   "bytes": 1397847,
+   "width": 3840,
+   "height": 2160
+  }
+ },
+ "regenerate": [
+  "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --base --out out/showcase/07_piq_balls_collide/base.mp4",
+  "python generate.py --protocol physics_iq --image assets/showcase/07_piq_balls_collide/first_frame.jpg --prompt 'Static locked-off single-shot with fixed frame throughout filmed with constant framerate in real-time. The scene shows a realistic scientific demonstration. The scene only contains the described setup and actions. A light-colored wooden tabletop with two pipes at the edges. The blue and the yellow tennis ball roll out of the pipes and collide with the same speed.' --seed 42 --out out/showcase/07_piq_balls_collide/moplan.mp4"
+ ]
+}

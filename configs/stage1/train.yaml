@@ -1,0 +1,393 @@
+# Stage-1 (motion planner) training recipe of the released MoPlan checkpoint.
+#
+# Every model, loss, optimisation and data value is identical to the run that
+# produced the released Stage-1 weights (8 GPUs, global batch 32, 6000 steps).
+# Only filesystem locations are parameterised. The trainer replaces these
+# placeholders before anything else reads the config:
+#   ${MOPLAN_DATA}     root of the built Stage-1 data (see docs/DATA_STAGE1.md);
+#                      --data-root or the MOPLAN_DATA environment variable
+#   ${WAN_MODEL_DIR}   Wan2.2-I2V-A14B-Diffusers directory;
+#                      --wan-model-dir or the WAN_MODEL_DIR environment variable
+#   ${MOPLAN_WORK_DIR} run output root; --work-dir or MOPLAN_WORK_DIR
+# Use launch/train_stage1.sh to train and scripts/stage1_smoke.py for a 1-GPU
+# smoke test. See docs/TRAINING_STAGE1.md.
+codec:
+  backend: vae
+  gamma: 0.5
+  kind: radial_power
+  max_px: 64.0
+  visibility_channel: true
+data:
+  additional_sources:
+  - condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/event_static/sam2_conditions
+    condition_mask_source: first_frame_sam2_instance_masks
+    flow_cache_dir: ${MOPLAN_DATA}/stage1/event_static/flowdit
+    horizon_seconds:
+    - 0.1
+    - 0.2
+    - 0.4
+    - 0.8
+    - 1.2
+    - 2.4
+    - 4.0
+    label_source: flyobj_text_composite_analytic_v1
+    manifest_dir: ${MOPLAN_DATA}/stage1/event_static/manifests
+    mix_fraction: 0.12
+    name: event_static
+    prompt_table: ${MOPLAN_DATA}/stage1/event_static/metadata/prompt_table.pt
+    supervision_from_target: true
+    supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/event_static/metadata/supervision_mover_ids_manifest.json
+    target_cache_dir: ${MOPLAN_DATA}/stage1/event_static/targets
+    prompt_table_mmap: true
+  - affine_cache_dir: ''
+    caption_overrides: ${MOPLAN_DATA}/stage1/phyco_anchor/metadata/caption_overrides_full.json
+    condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/phyco_anchor/sam2_conditions
+    condition_mask_source: first_frame_sam2_instance_masks
+    condition_scope: first_frame_rgb_plus_reviewed_causal_caption_plus_first_frame_sam2_instance_masks
+    exclusions_manifest: ${MOPLAN_DATA}/stage1/phyco_anchor/metadata/exclusions_manifest.json
+    flow_cache_dir: ${MOPLAN_DATA}/stage1/phyco_anchor/flowdit
+    future_indices:
+    - 2
+    - 4
+    - 6
+    - 8
+    - 10
+    - 12
+    - 14
+    horizon_seconds:
+    - 0.5714
+    - 1.1429
+    - 1.7143
+    - 2.2857
+    - 2.8571
+    - 3.4286
+    - 4.0
+    label_source: phyco_kubric_raft_flow_plus_rendered_instance_segmentation
+    manifest_dir: ${MOPLAN_DATA}/stage1/phyco_anchor/manifests
+    mix_fraction: 0.14
+    name: phyco_anchor
+    prompt_table: ${MOPLAN_DATA}/stage1/phyco_anchor/metadata/prompt_table.pt
+    supervision_affine: false
+    supervision_cache_dir: ''
+    supervision_from_target: true
+    supervision_mode: valid_partition_v1
+    supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/phyco_anchor/metadata/supervision_mover_ids_manifest.json
+    target_cache_dir: ${MOPLAN_DATA}/stage1/phyco_anchor/targets
+    temporal_subsample_indices:
+    - 1
+    - 3
+    - 5
+    - 7
+    - 9
+    - 11
+    - 13
+    prompt_table_mmap: true
+  - name: pool_v2
+    horizon_seconds:
+    - 0.5714
+    - 1.1429
+    - 1.7143
+    - 2.2857
+    - 2.8571
+    - 3.4286
+    - 4.0
+    future_indices:
+    - 2
+    - 4
+    - 6
+    - 8
+    - 10
+    - 12
+    - 14
+    condition_mask_source: first_frame_sam2_instance_masks
+    label_source: phyco_kubric_raft_flow_plus_rendered_instance_segmentation
+    condition_scope: first_frame_rgb_plus_pool_direction_caption_plus_first_frame_sam2_instance_masks
+    supervision_from_target: true
+    supervision_affine: false
+    supervision_mode: valid_partition_v1
+    mix_fraction: 0.07
+    manifest_dir: ${MOPLAN_DATA}/stage1/pool_v2/manifests
+    target_cache_dir: ${MOPLAN_DATA}/stage1/pool_v2/targets
+    flow_cache_dir: ${MOPLAN_DATA}/stage1/pool_v2/flowdit
+    condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/pool_v2/sam2_conditions
+    supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/pool_v2/metadata/supervision_mover_ids_manifest.json
+    prompt_table: ${MOPLAN_DATA}/stage1/pool_v2/metadata/prompt_table.pt
+    prompt_table_mmap: true
+  - name: real_p101
+    affine_cache_dir: ''
+    exclusions_manifest: ''
+    manifest_dir: ${MOPLAN_DATA}/stage1/real/p101/manifests
+    target_cache_dir: ${MOPLAN_DATA}/stage1/real/p101/targets
+    flow_cache_dir: ${MOPLAN_DATA}/stage1/real/p101/flowdit
+    condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/real/p101/sam2_conditions
+    condition_mask_source: first_frame_sam2_instance_masks
+    condition_scope: first_frame_rgb_plus_p101_template_caption_plus_first_frame_sam2_instance_masks
+    prompt_table: ${MOPLAN_DATA}/stage1/real/p101/metadata/prompt_table.pt
+    prompt_table_mmap: true
+    supervision_from_target: true
+    supervision_affine: false
+    supervision_mode: valid_partition_v1
+    supervision_cache_dir: ''
+    supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/real/p101/metadata/supervision_mover_ids_manifest.json
+    label_source: real_measured_plan_v3
+    horizon_seconds:
+    - 0.20833333333333334
+    - 0.4166666666666667
+    - 0.625
+    - 0.8333333333333334
+    - 1.2
+    - 2.0
+    - 4.0
+    mix_fraction: 0.08
+  - name: real_p101r
+    affine_cache_dir: ''
+    exclusions_manifest: ''
+    manifest_dir: ${MOPLAN_DATA}/stage1/real/p101r/manifests
+    target_cache_dir: ${MOPLAN_DATA}/stage1/real/p101r/targets
+    flow_cache_dir: ${MOPLAN_DATA}/stage1/real/p101r/flowdit
+    condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/real/p101r/sam2_conditions
+    condition_mask_source: first_frame_sam2_instance_masks
+    condition_scope: first_frame_rgb_plus_p101_template_caption_plus_first_frame_sam2_instance_masks
+    prompt_table: ${MOPLAN_DATA}/stage1/real/p101r/metadata/prompt_table.pt
+    prompt_table_mmap: true
+    supervision_from_target: true
+    supervision_affine: false
+    supervision_mode: valid_partition_v1
+    supervision_cache_dir: ''
+    supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/real/p101r/metadata/supervision_mover_ids_manifest.json
+    label_source: real_measured_plan_v3
+    horizon_seconds:
+    - 0.20833333333333334
+    - 0.4166666666666667
+    - 0.625
+    - 0.8333333333333334
+    - 1.2
+    - 2.0
+    - 4.0
+    mix_fraction: 0.08
+  - name: real_ssv2
+    affine_cache_dir: ''
+    exclusions_manifest: ''
+    manifest_dir: ${MOPLAN_DATA}/stage1/real/ssv2/manifests
+    target_cache_dir: ${MOPLAN_DATA}/stage1/real/ssv2/targets
+    flow_cache_dir: ${MOPLAN_DATA}/stage1/real/ssv2/flowdit
+    condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/real/ssv2/sam2_conditions
+    condition_mask_source: first_frame_sam2_instance_masks
+    condition_scope: first_frame_rgb_plus_ssv2_template_caption_plus_first_frame_sam2_instance_masks
+    prompt_table: ${MOPLAN_DATA}/stage1/real/ssv2/metadata/prompt_table.pt
+    prompt_table_mmap: true
+    supervision_from_target: true
+    supervision_affine: false
+    supervision_mode: valid_partition_v1
+    supervision_cache_dir: ''
+    supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/real/ssv2/metadata/supervision_mover_ids_manifest.json
+    label_source: real_measured_plan_v3
+    horizon_seconds:
+    - 0.5714
+    - 1.1429
+    - 1.7143
+    - 2.2857
+    - 2.8571
+    - 3.4286
+    - 4.0
+    mix_fraction: 0.06
+  delta_time: 0.6
+  emit_instance_masks: 16
+  flow_resolution: 256
+  future_indices:
+  - 2
+  - 4
+  - 6
+  - 8
+  - 10
+  - 12
+  - 14
+  height: 160
+  horizon_seconds:
+  - 0.1
+  - 0.2
+  - 0.4
+  - 0.8
+  - 1.2
+  - 2.4
+  - 4.0
+  input_frames: 21
+  max_instances: 64
+  prompt_pad_length: 64
+  simulation_fps: 5.0
+  start_sec: 0.0
+  supervision_affine: false
+  supervision_mode: valid_partition_v1
+  target_fps: 5.0
+  time_scale_seconds: 4.0
+  width: 160
+  name: fot
+evaluation:
+  gain: 1.0
+  guidance_scale: 1.0
+  num_samples: 1
+  num_steps: 1
+  reduce: first
+  shrinkage_px: 0.0
+  visualizations: 0
+loss:
+  acceleration: 0.0
+  activity_min_pixels: 4
+  activity_moving_fraction: 0.05
+  activity_static_fraction: 0.95
+  aux_sigma_weight: uniform
+  aux_warmup_steps: 0
+  background_motion_weight: 0.02
+  delta_time: 0.2
+  dense_motion_mask: 5.0
+  dense_motion_mask_dice_weight: 0.5
+  dense_motion_mask_pixel_bce_fraction: 0.75
+  dense_motion_mask_target_mode: whole_object_motion_v3_task_object
+  flow_charbonnier: 1.0
+  flow_epsilon_px: 0.5
+  flow_loss: charbonnier
+  flow_matching: 0.0
+  flow_moving_threshold_px: 1.0
+  flow_partition_weights:
+    background: 1.0
+    moving: 4.0
+    static: 2.0
+    weak: 1.0
+  flow_static_threshold_px: 0.5
+  gate_bce: 0.0
+  gated_flow_charbonnier: 0.25
+  motion_direction_epsilon_px: 0.5
+  motion_magnitude_beta_px: 1.0
+  motion_magnitude_scale_px: 16.0
+  moving_direction: 1.0
+  moving_parallel_magnitude: 1.0
+  object_activity: 0.0
+  object_displacement: 1.0
+  object_mask_bce: 0.1
+  object_motion_direction: 1.0
+  object_motion_parallel_magnitude: 1.0
+  object_occupancy: 0.0
+  pixel_activity: 0.0
+  position: 0.0
+  slot_affine: 0.0
+  slot_mask: 0.5
+  supervision_mode: valid_partition_v1
+  task_object_slot_activity: 5.0
+  task_object_slot_prior_bce_fraction: 0.75
+  trajectory_segment: 0.5
+  trajectory_velocity_scale_px: 32.0
+  velocity: 0.0
+  visibility_bce: 0.0
+  profile: legacy
+model:
+  architecture: wan2.2-i2v-a14b-flowdit
+  boundary_sigma: 0.9
+  decoder:
+    causal_slots: true
+    dense_motion_mask: true
+    dense_motion_mask_detach_shared: false
+    dense_motion_mask_shared_gradient_scale: 0.05
+    depth: 2
+    hidden: 128
+    image_widths:
+    - 16
+    - 32
+    - 64
+    incremental_params: false
+    num_slots: 16
+    oracle_instance_masks: true
+    residual_branch: true
+    residual_scale: 0.05
+    slot_hidden: 256
+    task_object_slot_activity: true
+    temporal_slots: true
+    text_slot_binding: true
+    text_slot_binding_heads: 4
+    text_slot_binding_max_gain: 2.0
+    type: slots
+    visibility_from_motion: true
+    zero_init_flow_head: true
+    slot_pooling_mode: area
+    text_slot_fusion: false
+  expert: high
+  gradient_checkpointing: true
+  lora_alpha: 32
+  lora_rank: 32
+  use_instance_channels: true
+  use_time_channel: true
+paths:
+  affine_cache_dir: ''
+  condition_instance_cache_dir: ${MOPLAN_DATA}/stage1/fot/sam2_conditions
+  condition_mask_source: first_frame_sam2_instance_masks
+  exclusions_manifest: ''
+  flow_cache_dir: ${MOPLAN_DATA}/stage1/fot/flowdit
+  hdf5_root: ''
+  manifest_dir: ${MOPLAN_DATA}/stage1/fot/manifests
+  output_dir: ${MOPLAN_WORK_DIR}/runs/stage1
+  prompt_table: ${MOPLAN_DATA}/stage1/fot/metadata/prompt_table.pt
+  supervision_cache_dir: ''
+  supervision_from_target: true
+  supervision_instance_cache_dir: ''
+  supervision_instance_mask_source: ''
+  supervision_instance_masks_from_condition: false
+  supervision_mover_ids_manifest: ${MOPLAN_DATA}/stage1/fot/metadata/supervision_mover_ids_manifest.json
+  target_cache_dir: ${MOPLAN_DATA}/stage1/fot/targets
+  wan_model: ${WAN_MODEL_DIR}
+  workspace: ${MOPLAN_WORK_DIR}
+  prompt_table_mmap: true
+provenance:
+  condition_scope: first_frame_rgb_plus_text_instruction_caption_plus_first_frame_sam2_instance_masks
+  label_source: flyobj_text_composite_analytic_v1
+seed: 42
+train:
+  caption_dropout: 0.0
+  early_stop_min_delta: 0.002
+  early_stop_patience: 0
+  eval_every: 200
+  eval_samples: 96
+  flow_shift: 5.0
+  freeze_visibility_heads: true
+  grad_accum_steps: 4
+  head_learning_rate: 5.0e-05
+  keep_last: 40
+  log_every: 5
+  lora_learning_rate: 2.0e-05
+  max_grad_norm: 1.0
+  max_steps: 6000
+  num_workers: 2
+  objective: direct
+  per_gpu_batch: 1
+  precision: bf16
+  refine_from: ''
+  save_every: 200
+  selection_metric: balanced_raw_motion/moving_relative_epe
+  separate_mask_gradient_clip: true
+  separate_task_object_gradient_clip: true
+  static_guard_metric: worst_domain_raw_motion/static_pred_magnitude_px
+  static_magnitude_budget_px: 8.0
+  warmup_steps: 200
+  weight_decay: 0.01
+  global_batch: 32
+  exact_resume: true
+  sampler: source_cycle_v1
+  min_unique_scenes: 20000
+  unified_campaign: true
+  min_unique_scenes_by_source:
+    pool_v2: 3000
+  gradient_diagnostic_steps: 8
+unified_experiment:
+  schema: unified_stage1_historical_best_v1
+  arm: historical_best
+  recipe: moplan_stage1_v2
+  initialization: original_wan_only
+  fractions:
+    event_static: 0.12
+    phyco_anchor: 0.14
+    pool_v2: 0.07
+    real_p101: 0.08
+    real_p101r: 0.08
+    real_ssv2: 0.06
+    fot: 0.45
+  # Rank count of the reference run. The trainer requires 4 or 8 and checks
+  # train.grad_accum_steps == 32 / world_size and the runtime rank count.
+  world_size: 8
