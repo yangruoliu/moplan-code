@@ -56,7 +56,9 @@ One `torch.save` dict per clip, about 3.5 MB (about 75 GB for all pools). Keys t
 A clip whose scene has come to rest before its end is extended with its last real frame to the full 41-frame window
 (`frames_real < frames`), and its plan is held. Other keys (`cond_null`, `cond_zero`, `labels_real`,
 `object_masks_latent`, plan summaries, `video_path`, `first_frame_path`, `prompt`) are written for analysis and for the
-RAFT preparation. The string fields hold absolute paths of the machine that built the cache.
+RAFT preparation. `video_path` and `first_frame_path` hold absolute paths of the machine that built the cache, because
+the RAFT preparation and the data manifests open the files by these paths. Provenance records (checkpoint, manifest
+and prior entries of the caches, exports, receipts and summaries) give file or folder names plus sha256 instead.
 
 ## Sources and licences
 

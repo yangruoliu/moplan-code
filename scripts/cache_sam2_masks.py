@@ -98,6 +98,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def file_sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
 def read_rows(path: Path) -> list[dict]:
     if path.suffix == ".jsonl":
         return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
@@ -222,7 +230,8 @@ def main(argv: list[str] | None = None) -> None:
     elapsed = time.monotonic() - started
     receipt = {
         "schema": "stage1_sam2_condition_shard_v1",
-        "manifest": str(manifest.resolve()),
+        "manifest": manifest.name,                                      # file names plus sha256, no machine paths
+        "manifest_sha256": file_sha256(manifest),
         "total_manifest_rows": total_rows,
         "shard_index": args.shard_index,
         "num_shards": args.num_shards,
@@ -231,7 +240,8 @@ def main(argv: list[str] | None = None) -> None:
         "skipped": skipped,
         "elapsed_seconds": elapsed,
         "seconds_per_generated_sample": elapsed / done if done else None,
-        "sam_checkpoint": str(Path(args.sam_checkpoint).resolve()),
+        "sam_checkpoint": Path(args.sam_checkpoint).name,
+        "sam_checkpoint_sha256": file_sha256(Path(args.sam_checkpoint)),
         "sam_config": args.sam_config,
         "points_per_side": args.points_per_side,
         "points_per_batch": args.points_per_batch,

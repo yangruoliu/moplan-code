@@ -31,7 +31,7 @@ from motion_jepa.stage2_condition import NATIVE5_NAMES, render_native5
 
 
 def verify_export_provenance(export, sample_id, checkpoint, state_sha256, marker_sha256):
-    expected = {"checkpoint": str(checkpoint.resolve()),
+    expected = {"checkpoint": checkpoint.resolve().name,                 # as motion_jepa/flow_dit_export.checkpoint_provenance
                 "checkpoint_state_sha256": state_sha256,
                 "checkpoint_complete_sha256": marker_sha256}
     if export.get('sample_id') != sample_id or export.get('stage1_provenance') != expected:
@@ -123,19 +123,19 @@ def main():
                 native_hw = (first.height, first.width)
         real = mp.load_plan(a.real_plans / f'{sid}.npz') if a.native5 and a.real_plans else None
         updated, plan = refresh_payload(payload, export, native_hw, native5=a.native5, real_plan=real)
-        updated['stage1_checkpoint'] = str(a.stage1_checkpoint.resolve())
-        updated['stage1_export'] = str(export_path.resolve())
+        updated['stage1_checkpoint'] = a.stage1_checkpoint.resolve().name     # names only; the sha256 are in the receipt
+        updated['stage1_export'] = export_path.name
         if sid in rows:
             updated['first_frame_path'] = rows[sid]['first_frame_path']
         torch.save(updated, a.output / f'{sid}.pt')
         mp.save_plan(a.output / 'plans' / f'{sid}.npz', plan)
         if not a.no_scenes:
             (a.output / 'scenes_v5' / f'{sid}.npz').symlink_to(scene.resolve())
-        evidence.append({'sample_id': sid, 'source_cache': str(original.resolve()),
+        evidence.append({'sample_id': sid, 'source_cache': original.name,
                          'export_sha256': hashlib.sha256(export_path.read_bytes()).hexdigest()})
     (a.output / 'ids_train.txt').write_text(''.join(sid + '\n' for sid in ids))
     (a.output / 'PREDICTION_RECEIPT.json').write_text(json.dumps({
-        'stage1_checkpoint': str(a.stage1_checkpoint.resolve()),
+        'stage1_checkpoint': a.stage1_checkpoint.resolve().name,
         'stage1_state_sha256': state_sha256, 'stage1_checkpoint_complete_sha256': marker_sha256,
         'coverage': coverage, 'smoke_only': a.allow_smoke_checkpoint,
         'purpose': a.purpose, 'evaluation_only': a.purpose == 'evaluation',

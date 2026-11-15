@@ -206,7 +206,7 @@ def main(argv: list[str] | None = None) -> None:
         if not a.prompt_embeds or not Path(a.prompt_embeds).is_file():
             raise SystemExit("--phase high/low needs --prompt-embeds (run --phase embed first)")
         embeds = torch.load(a.prompt_embeds, map_location="cpu", weights_only=True)
-        if a.negative_prompt and embeds.get("negative_prompt") != a.negative_prompt:      # only official-negative runs check (older files differ)
+        if embeds.get("negative_prompt") != negative_prompt:     # the resolved one: --negative-prompt, else Wan2.2's official one
             raise SystemExit(f"{a.prompt_embeds} was encoded with another negative prompt than this run's")
         stage_dir.mkdir(parents=True, exist_ok=True)
     blocks = list(model_cfg["injection_blocks"])

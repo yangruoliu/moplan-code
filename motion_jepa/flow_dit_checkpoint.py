@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -209,7 +210,8 @@ def initialize_from_checkpoint(
         raise ValueError("task-object slot-head migration changed unexpected decoder keys")
     return {
         "kind": "weights_only",
-        "checkpoint": str(checkpoint.resolve()),
+        "checkpoint": checkpoint.resolve().name,                        # folder name plus sha256, no machine path
+        "checkpoint_state_sha256": hashlib.sha256((checkpoint / "trainer_state.json").read_bytes()).hexdigest(),
         "source_step": int(state["step"]),
         "source_expert": state["expert"],
         "source_label_source": state.get("label_source"),

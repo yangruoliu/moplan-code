@@ -74,7 +74,7 @@ def main():
         stats["files"] += 1
         stats["filled_files"] += int(n_fill > 0)
         stats["filled_latents"] += n_fill
-    stats.update(src=str(a.src), keys=keys, rule="latents after the last known latent copy that latent's full 27-ch condition")
+    stats.update(src=a.src.resolve().name, keys=keys, rule="latents after the last known latent copy that latent's full 27-ch condition")
     (a.dst / "HOLD_KNOWN_RECEIPT.json").write_text(json.dumps(stats, indent=1) + "\n")
     print(json.dumps({k: v for k, v in stats.items()}))
 

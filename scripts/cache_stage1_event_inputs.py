@@ -129,7 +129,7 @@ def main():
                       "flow_latent": prior.expand(-1, derived["latent_frames"], -1, -1).clone(),
                       "latent_semantics": "constant_prior_placeholder_direct_only",
                       "codec": {**prior_codec, "latent_frames": derived["latent_frames"]},
-                      "provenance": {"prior_cache": str(a.prior_cache), "prior_sha256": prior_hash,
+                      "provenance": {"prior_cache": Path(a.prior_cache).name, "prior_sha256": prior_hash,
                         "first_frame_sha256": hashlib.sha256(Path(frame_path).read_bytes()).hexdigest(),
                         "future_labels_used_for_inputs": False}}
             torch.save(sample, out / (row["sample_id"] + ".pt")); count += 1

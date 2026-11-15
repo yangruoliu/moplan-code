@@ -10,10 +10,11 @@ from motion_jepa.flow_dit_sampler import reduce_samples
 
 
 def checkpoint_provenance(checkpoint: str | Path) -> dict:
+    """The Stage-1 checkpoint an export came from: folder name plus the sha256 of its state files (no machine path)"""
     checkpoint = Path(checkpoint).resolve()
     marker = checkpoint / "checkpoint_complete.json"
     return {
-        "checkpoint": str(checkpoint),
+        "checkpoint": checkpoint.name,
         "checkpoint_state_sha256": hashlib.sha256((checkpoint / "trainer_state.json").read_bytes()).hexdigest(),
         "checkpoint_complete_sha256": hashlib.sha256(marker.read_bytes()).hexdigest() if marker.is_file() else None,
     }

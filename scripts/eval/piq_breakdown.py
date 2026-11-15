@@ -354,11 +354,11 @@ def main():
         "description": "Physics-IQ breakdown, arm final vs arm base; "
                        "existing scored CSVs only. All scores x100.",
         "arms": ARMS,
-        "results_root": R,
+        "results_root": os.path.basename(os.path.normpath(R)),          # folder names only, no machine paths
         "scorers": {
-            "verified_bpp": {"code": CODE_NEW, "fn": "physiq.calculate_iq_score_stable.IQTable.get_output_dict "
+            "verified_bpp": {"code": os.path.basename(os.path.normpath(CODE_NEW)), "fn": "physiq.calculate_iq_score_stable.IQTable.get_output_dict "
                              "(final_score_view, score_*_view)", "dirs": "<label>-bpp-run_XX__verified"},
-            "original_op_ec2c611": {"code": CODE_OLD, "fn": "code/calculate_iq_score.py::calculate_iq_score "
+            "original_op_ec2c611": {"code": os.path.basename(os.path.normpath(CODE_OLD)), "fn": "code/calculate_iq_score.py::calculate_iq_score "
                                     "(variance rounding kept; final x100 clipped [0,100], not rounded to 2 dp)",
                                     "dirs": "<label>-op-run_XX__orig_ec2c611",
                                     "components": "score_st/sp/ws = metric_mean / rounded physical variance; "

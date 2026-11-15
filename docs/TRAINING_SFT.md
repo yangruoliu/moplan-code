@@ -105,8 +105,9 @@ batch, learning rates and `max_steps` are unchanged.
 
 `NPROC` may be any divisor of 16; the gradient accumulation is 16 / `NPROC`. Every choice trains on the same sequence
 of samples (clip, sigma, noise). The order of floating-point reductions across GPUs differs, and GPU kernels are not
-bitwise deterministic, so a retrained checkpoint is close to, but not bitwise equal to, the released one. Use the
-released weights to reproduce the published videos.
+bitwise deterministic, so a retrained checkpoint is close to, but not bitwise equal to, the checkpoint the released
+RAFT round started from (which is not distributed). To reproduce the published videos, use the released final
+generator (`stage2/high/`, `stage2/low/`), not a retrained GT-SFT checkpoint.
 
 ### Starting point without SFT
 

@@ -217,7 +217,7 @@ class ActivityHeadsOnlyControl:
         self.contract = {
             "schema_version": 2 if mode_key == "mask_heads_only" else 1,
             "mode": mode_key,
-            "source_checkpoint": str(checkpoint.resolve()),
+            "source_checkpoint": checkpoint.resolve().name,             # name only; source_backend_sha256 identifies it
             "source_backend_sha256": _sha256(checkpoint / "backend_params.pt"),
             "frozen_decoder_tensor_sha256": _state_tensor_hash(self.decoder_reference),
             "backend_parameter_names": sorted(self.backend_reference),

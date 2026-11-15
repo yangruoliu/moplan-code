@@ -1,4 +1,4 @@
-"""Showcase helper: render the gallery, check the assets, list and verify regenerated panels.
+"""Showcase helper: render the video page, check the assets, list and verify regenerated panels.
 
 Every case lives in assets/showcase/<NN>_<id>/ with a meta.json that is the single source of truth.
 
@@ -21,32 +21,6 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-GROUPS = [
-    ("Inertia", "Inertia: motion follows the first frame",
-     "Image-to-video models tend to produce the motion the first frame suggests, whatever the text says. MoPlan "
-     "predicts the motion plan from the first frame and the text, so the named object moves in the named direction. "
-     "Two-row examples pair the real instruction (A) with an opposite one (B) on the same first frame and seed."),
-    ("Confabulation", "Confabulation: models invent agents and objects",
-     "When the cause of a motion is not visible, the untrained model tends to invent one: a hand, a tool or new "
-     "objects. MoPlan moves only the objects that are in the first frame."),
-    ("Entanglement", "Entanglement: the camera moves with the object",
-     "The real camera is fixed. Image-to-video models often move the camera with the object; in these examples "
-     "MoPlan keeps the camera still while the object moves."),
-    ("Physics-IQ qualitative", "General physical events (Physics-IQ)",
-     "Out-of-domain real experiments from Physics-IQ. The real video is the recorded continuation after the "
-     "conditioning frame."),
-    ("New results", "Further examples",
-     "Further examples on rendered RigidBench scenes (no recorded continuation)."),
-]
-INTRO = ("Each example uses the same first frame, the same text and the same random seed for both models, under the "
-         "same generation protocol (448×256). The base model is the untrained Wan2.2-I2V-A14B; MoPlan is our final "
-         "model, which predicts an object-level motion plan from the first frame and the text and generates the "
-         "video conditioned on it. Where it is available, the real continuation is shown on the left.")
-SELECTION = ("Examples were chosen by watching the videos, not by score alone: we kept only cases where the physical "
-             "event is right and the difference from the base model is visible.")
-LEGEND = ["left: real video (when shown)", "middle: untrained Wan2.2, same seed", "right: MoPlan"]
-FOOTER = ("Videos are shown at the resolution and frame rate used for evaluation (448×256; 8 fps for Physics-IQ, "
-          "7 fps otherwise).")
 TABLE_START, TABLE_END = "<!-- cases:start -->", "<!-- cases:end -->"
 
 
@@ -130,62 +104,6 @@ pre { white-space: pre-wrap; word-break: break-all; font-size: 0.8rem; backgroun
   border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
 footer { margin-top: 40px; color: var(--muted); font-size: 0.9rem; }
 """
-
-
-def card_html(c, prefix=""):
-    e = html.escape
-    f = c["files"]
-    fo = prefix + c["folder"]
-    v = f["video"]
-    out = [f'<article class="card" id="case-{c["number"]:02d}">',
-           f'<h3><span class="num">#{c["number"]}</span>{e(c["title"])}</h3>',
-           f'<video controls loop muted playsinline preload="none" width="{v["width"]}" height="{v["height"]}" '
-           f'poster="{e(fo)}/{e(f["poster"]["path"])}">'
-           f'<source src="{e(fo)}/{e(v["path"])}" type="video/mp4"></video>',
-           f'<p>{e(c["caption"])}</p>']
-    rows = []
-    for row, p in generated_panels(c):
-        rows.append("<tr>" + "".join(f"<td>{e(str(x))}</td>" for x in (
-            row["row"] or "", p["label"], p["sample_id"], p["seed"], p["prompt"])) + "</tr>")
-    out.append('<details><summary>Prompts, seeds and inputs</summary>'
-               f'<p class="muted">{e(c["benchmark"])}: {e(c["benchmark_detail"])}. '
-               f'First frame: <a href="{e(fo)}/{e(f["first_frame"]["path"])}">'
-               f'{e(f["first_frame"]["path"])}</a> ({e(c["first_frame"]["source"])}).</p>'
-               '<table><tr><th>Row</th><th>Panel</th><th>Sample id</th><th>Seed</th><th>Prompt</th></tr>'
-               + "".join(rows) + "</table>"
-               f'<p class="muted">Seed rule: {e(c["seed_rule"])}.</p>'
-               '<p class="muted">Regenerate (from the repository root):</p>'
-               f'<pre>{e(chr(10).join(c["regenerate"]))}</pre>'
-               f'<p class="muted"><a href="{e(fo)}/meta.json">meta.json</a></p></details>')
-    s = f["strip"]
-    out.append('<details><summary>Frames over time</summary>'
-               f'<img class="strip" loading="lazy" src="{e(fo)}/{e(s["path"])}" width="{s["width"]}" '
-               f'height="{s["height"]}" alt="frames over time: {e(c["title"])}"></details>')
-    out.append("</article>")
-    return "\n".join(out)
-
-
-def index_html(cases, prefix="", header=None):
-    e = html.escape
-    parts = ['<!doctype html>', '<html lang="en">', '<head>', '<meta charset="utf-8">',
-             '<meta name="viewport" content="width=device-width, initial-scale=1">',
-             '<title>MoPlan showcase</title>', f'<style>{CSS}</style>', '</head>', '<body>', '<main>']
-    parts += header if header else ['<h1>MoPlan: video comparisons with the untrained base model</h1>']
-    parts += [
-             f'<p>{e(INTRO)}</p>', f'<p class="muted">{e(SELECTION)}</p>',
-             '<p class="legend">' + "".join(f"<span>{e(x)}</span>" for x in LEGEND) + '</p>', '<nav>']
-    used = [g for g in GROUPS if any(c["finding_group"] == g[0] for c in cases)]
-    for key, heading, _ in used:
-        nums = [c["number"] for c in cases if c["finding_group"] == key]
-        rng = f"#{nums[0]}" if len(nums) == 1 else f"#{nums[0]}–{nums[-1]}"
-        parts.append(f'<a href="#{e(key.lower().replace(" ", "-"))}">{e(heading)} ({rng})</a>')
-    parts.append('</nav>')
-    for key, heading, text in used:
-        parts.append(f'<h2 id="{e(key.lower().replace(" ", "-"))}">{e(heading)}</h2>')
-        parts.append(f'<p>{e(text)}</p>')
-        parts += [card_html(c, prefix) for c in cases if c["finding_group"] == key]
-    parts += [f'<footer>{e(FOOTER)}</footer>', '</main>', '</body>', '</html>', '']
-    return "\n".join(parts)
 
 
 def root_html(cases, prefix=""):

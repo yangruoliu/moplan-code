@@ -4,8 +4,9 @@
 launch/eval_bench_generate.sh keeps one embedding file per benchmark ($EVAL_ROOT/<bench>/prompt_embeds.pt) for every
 model, and the high / low phases look each clip's generator prompt up in it.  This check runs before any model is
 loaded: exit 0 when the file exists and holds the generator prompt of every id (the --prompt-table entry of the id, else
-the "prompt" of its condition cache, as infer_stage2_cond_v2.py resolves it) and, with --negative-prompt-file, was
-encoded with that negative prompt; exit 1 (with the reason on stderr) otherwise, so the caller encodes it again.
+the "prompt" of its condition cache, as infer_stage2_cond_v2.py resolves it) and was encoded with the run's negative
+prompt (the text of --negative-prompt-file, else Wan2.2's official one, as infer_stage2_cond_v2.py resolves it); exit 1
+(with the reason on stderr) otherwise, so the caller encodes it again.
 The caches are memory-mapped, so only their small fields are read.
 
 usage: embeds_cover.py --embeds E.pt --cache-dir CACHE --ids IDS.txt [--prompt-table T.json] [--negative-prompt-file N.txt]
@@ -27,13 +28,22 @@ def load(path: Path, **kwargs):
         return torch.load(path, map_location="cpu", **kwargs)
 
 
+def default_negative_prompt() -> str:
+    """Wan2.2's official negative prompt: what infer_stage2_cond_v2.py uses without --negative-prompt"""
+    root = str(Path(__file__).resolve().parents[2])
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    from scripts.infer_stage2_oracle import WAN_BENCHMARK_NEGATIVE_PROMPT
+    return WAN_BENCHMARK_NEGATIVE_PROMPT
+
+
 def missing_reason(embeds: Path, cache_dir: Path, ids: list[str], table: dict, negative: str | None) -> str | None:
-    """None when the file covers the run, else why not"""
+    """None when the file covers the run, else why not (negative: the run's negative prompt; None = Wan2.2's default)"""
     if not embeds.is_file():
         return f"{embeds} does not exist"
     have = load(embeds, weights_only=True)
-    if negative and have.get("negative_prompt") != negative:
-        return f"{embeds} was encoded with another negative prompt"
+    if have.get("negative_prompt") != (negative or default_negative_prompt()):
+        return f"{embeds} was encoded with another negative prompt than the run's"
     need = {table[sid] if sid in table else load(cache_dir / f"{sid}.pt", weights_only=False)["prompt"] for sid in ids}
     lack = need - set(have["prompts"])
     if lack:

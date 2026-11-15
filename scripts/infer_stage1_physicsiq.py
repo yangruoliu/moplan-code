@@ -13,8 +13,8 @@ Writes ``flows/<sample_id>.pt`` with the fields the Stage-2 condition renderer c
 ``activity_input_instance_masks``, ``task_object_slot_probability``, ``motion_mask``, ``horizon_seconds``,
 ``geometry``, ...).  Each payload records checkpoint/config/decode provenance and the letterbox geometry.  Input
 files are recorded by file name (plus sha256 where the provenance has one), never by absolute path; the
-``stage1_provenance`` checkpoint record of motion_jepa/flow_dit_export.py is the exception, because
-scripts/clean_r2/refresh_predictions.py compares it with the checkpoint in use.
+``stage1_provenance`` record of motion_jepa/flow_dit_export.py names the checkpoint folder and the sha256 of its
+state files, which scripts/clean_r2/refresh_predictions.py compares with the checkpoint in use.
 
 Checkpoint directory (``--checkpoint``): backend_params.pt, decoder.pt, trainer_state.json, the inference config
 resolved_config.yaml (default for --config), optional checkpoint_complete.json, and the direct-objective prior

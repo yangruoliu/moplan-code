@@ -257,12 +257,16 @@ def test_embeds_cover_full_id_list(tmp_path):
     ids.write_text("a\nb\nc\n")
     args = ["--embeds", str(emb), "--cache-dir", str(cache), "--ids", str(ids)]
     assert EC.main(args) == 1                                          # no file yet
-    torch.save({"prompts": {"p1": torch.zeros(2)}, "negative": torch.zeros(2), "negative_prompt": "neg"}, emb)
+    default = EC.default_negative_prompt()
+    torch.save({"prompts": {"p1": torch.zeros(2)}, "negative": torch.zeros(2), "negative_prompt": default}, emb)
     assert EC.main(args) == 1                                          # e.g. written by a smoke test over id a only
     table.write_text(json.dumps({"b": "p1"}))                          # the prompt table overrides the cache prompt
-    assert EC.main(args + ["--prompt-table", str(table)]) == 0
+    assert EC.main(args + ["--prompt-table", str(table)]) == 0        # no --negative-prompt-file: Wan2.2's default
     neg.write_text("neg\n")                                            # the launcher passes "$(cat file)": newline dropped
+    assert EC.main(args + ["--prompt-table", str(table), "--negative-prompt-file", str(neg)]) == 1
+    torch.save({"prompts": {"p1": torch.zeros(2)}, "negative": torch.zeros(2), "negative_prompt": "neg"}, emb)
     assert EC.main(args + ["--prompt-table", str(table), "--negative-prompt-file", str(neg)]) == 0
+    assert EC.main(args + ["--prompt-table", str(table)]) == 1        # a benchmark's negative, read by a default run
     neg.write_text("other")
     assert EC.main(args + ["--prompt-table", str(table), "--negative-prompt-file", str(neg)]) == 1
 

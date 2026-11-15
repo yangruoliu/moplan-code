@@ -316,7 +316,7 @@ def main() -> None:
         payload["caption_override_incremental"] = {
             **overrides.contract,
             "schema": "stage1_incremental_caption_prompts_v1",
-            "base_prompt_table_path": str(args.base_prompt_table.resolve()),
+            "base_prompt_table": args.base_prompt_table.name,          # file name plus sha256, no machine path
             "base_prompt_table_sha256": base_sha,
             "base_prompt_pad_length": base["prompt_pad_length"],
             "training_prompt_pad_length": pad_length,

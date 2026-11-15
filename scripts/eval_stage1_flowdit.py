@@ -299,7 +299,7 @@ def main() -> None:
     state = json.loads((checkpoint / "trainer_state.json").read_text())
     completion_marker = checkpoint / "checkpoint_complete.json"
     export_provenance = {
-        "checkpoint": str(checkpoint.resolve()),
+        "checkpoint": checkpoint.resolve().name,
         "checkpoint_state_sha256": hashlib.sha256((checkpoint / "trainer_state.json").read_bytes()).hexdigest(),
         "checkpoint_complete_sha256": hashlib.sha256(completion_marker.read_bytes()).hexdigest() if completion_marker.is_file() else None,
     }
@@ -548,8 +548,7 @@ def main() -> None:
     feasibility["passed"] = all(feasibility.values())
 
     result = {
-        # File names plus the checkpoint's sha256, no machine paths.  The per-export stage1_provenance above keeps the
-        # resolved checkpoint path, because scripts/clean_r2/refresh_predictions.py compares it.
+        # File names plus the checkpoint's sha256, no machine paths (as the per-export stage1_provenance above).
         "checkpoint": checkpoint.resolve().name,
         "checkpoint_state_sha256": export_provenance["checkpoint_state_sha256"],
         "checkpoint_step": int(state["step"]),
