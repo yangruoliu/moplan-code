@@ -6,7 +6,7 @@ to 2 decimals from the stored values (the convention of the reported tables; pla
             final_score_view x 100 of each run)
   Original  mean over the op runs of the UNROUNDED ec2c611 score.  The ec2c611 scorer prints each run's score rounded to
             2 decimals, and agg__<label>-op__orig_ec2c611.json averages these printed values, so its mean (rounded a
-            second time, and printed by agg_runs_v.py with %.2f) can differ from the unrounded mean in the last digit.
+            second time when agg_runs_v.py prints it) can differ from the unrounded mean in the last digit.
             The unrounded per-run scores are recomputed from the scorer CSVs by scripts/eval/piq_breakdown.py
             (checked against the printed values), so the Original column is taken from breakdown_<label>_vs_<base>.json
             when it exists (--base); without it, the mean of the printed per-run scores is shown and marked as such.

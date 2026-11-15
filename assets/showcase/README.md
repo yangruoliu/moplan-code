@@ -24,6 +24,7 @@ Each case lives in `<NN>_<id>/`:
 | `poster.jpg` | a frame of the composite at 0.75 of its length |
 | `strip.png` | six frames over time for each panel |
 | `first_frame.png` / `first_frame.jpg` | the generation input: a byte-identical copy (cases 1–7), or a pixel-identical copy with the PNG text and EXIF chunks removed (cases 8 and 9) |
+| `masks_k16.pt` | cases 4–7 only: the k16 SAM 2.1 masks of the first frame from the original run, read by the MoPlan command with `--masks` |
 | `meta.json` | title, caption, benchmark, sample ids, prompts, seeds, protocol, panel layout, commands, reference hashes |
 
 In `meta.json`:
@@ -35,6 +36,8 @@ In `meta.json`:
   below).
 - `first_frame.source` and `first_frame.attribution` give the origin, licence and any modification of the first
   frame.
+- `files` lists every file of the folder with its size and sha256 (`showcase.py check`); `files.masks` (cases 4–7)
+  is the mask file, and the MoPlan panel's `masks_note` says why its command passes it.
 
 ## Cases
 
@@ -129,7 +132,8 @@ python assets/showcase/showcase.py verify out/showcase
 ```
 
 `verify` compares `<key>.npy` (cases 1–3) and `<key>.mp4` (cases 4–7, raw or trimmed) with the references. It
-prints `MATCH`, `DIFFERS` or `NO-REF` for each file it finds and `NOT-VERIFIABLE` for the four panels of cases 8 and 9.
+prints `MATCH`, `DIFFERS` or `NO-REF` for each file it finds, `NOT-VERIFIABLE` for each of the four panels of cases 8
+and 9 that has an output, and counts panels without output.
 The exit code is 1 only when a file differs.
 
 The original runs used one H100 80GB per process with torch 2.5.1 and diffusers 0.38.0. A different GPU type or

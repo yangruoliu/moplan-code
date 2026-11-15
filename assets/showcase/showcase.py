@@ -76,33 +76,21 @@ def readme_table(cases):
 
 
 CSS = """
-:root { --fg: #1d1d1f; --muted: #5f6368; --bg: #ffffff; --card: #f6f7f9; --line: #dfe1e5; --chip: #e8eaed; }
+:root { --fg: #1d1d1f; --muted: #5f6368; --bg: #ffffff; --card: #f6f7f9; --line: #dfe1e5; }
 @media (prefers-color-scheme: dark) {
-  :root { --fg: #e8eaed; --muted: #a0a4a8; --bg: #16181b; --card: #202327; --line: #33373c; --chip: #2c3035; }
+  :root { --fg: #e8eaed; --muted: #a0a4a8; --bg: #16181b; --card: #202327; --line: #33373c; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 system-ui, sans-serif; }
 main { max-width: 1400px; margin: 0 auto; padding: 24px 16px 48px; }
 h1 { font-size: 1.7rem; margin: 0 0 8px; }
-h2 { font-size: 1.3rem; margin: 40px 0 6px; padding-top: 12px; border-top: 1px solid var(--line); }
 p { margin: 6px 0; }
 .muted { color: var(--muted); }
-.legend span { display: inline-block; background: var(--chip); border-radius: 12px; padding: 2px 10px;
-  margin: 4px 6px 0 0; font-size: 0.9rem; }
-nav a { margin-right: 14px; color: inherit; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
   margin: 18px 0; }
 .card h3 { margin: 0 0 8px; font-size: 1.1rem; }
 .num { color: var(--muted); margin-right: 6px; }
-video, img.strip { display: block; max-width: 100%; height: auto; border-radius: 6px; background: #000; }
-img.strip { background: transparent; margin-top: 8px; }
-details { margin-top: 8px; }
-summary { cursor: pointer; color: var(--muted); }
-table { border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 0.9rem; }
-th, td { border: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: top; }
-pre { white-space: pre-wrap; word-break: break-all; font-size: 0.8rem; background: var(--bg);
-  border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
-footer { margin-top: 40px; color: var(--muted); font-size: 0.9rem; }
+video { display: block; max-width: 100%; height: auto; border-radius: 6px; background: #000; }
 """
 
 
@@ -192,6 +180,10 @@ def cmd_verify(args):
             stem = root / c["folder"] / p["key"]
             if ref.get("verifiable") is False:
                 # the reference is not of a file generate.py writes, so a hash comparison would always fail
+                if not any(stem.with_suffix(ext).is_file() for ext in (".npy", ".mp4")):
+                    n_missing += 1
+                    print(f"NO-OUTPUT {c['folder']}/{p['key']}")
+                    continue
                 n_unverifiable += 1
                 print(f"NOT-VERIFIABLE {c['folder']}/{p['key']} (reference is an evaluation export: {ref['kind']})")
                 continue

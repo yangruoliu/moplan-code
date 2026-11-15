@@ -196,7 +196,7 @@ def main() -> None:
                        "plan_real_summary": json.dumps(mp.describe(plan_real)),
                        "label_source": "phyco_ground_truth_flow_rigid_v1", "at_rest": at_rest, "rest_motion_px": round(rest_motion, 4),
                        "pad_rule": f"at_rest_hold_last(pad_to={a.frames}, rest_px={a.rest_px})", "plan_anchors": [round(float(h), 6) for h in horizons],
-                       "known_frames_real": [True] * len(times), "video_path": row["video_path"], "target_path": row["stage1_target_path"],
+                       "known_frames_real": [True] * len(times), "video_path": row["video_path"], "target_path": Path(row["stage1_target_path"]).name,
                        "decode": decode, "builder": BUILDER, "conditions_present": ["real", "null"] + (["zero"] if a.with_zero else [])}
             if a.with_zero:
                 payload["cond_zero"] = pc.render_v2("zero", plan_real, image_latent, times, size).half()

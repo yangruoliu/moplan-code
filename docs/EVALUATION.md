@@ -182,7 +182,7 @@ The reported columns are:
 Both columns are rounded half up to 2 decimals from the stored values. `eval_piq_report.sh` prints them at the end
 (`scripts/eval/piq_report_values.py`). The ec2c611 scorer prints each run's score rounded to 2 decimals, and
 `agg_runs_v.py` averages these printed scores, so its Original mean (`agg__<label>-op__orig_ec2c611.json`, printed
-with `%.2f`) can differ from the reported value by 0.01. The unrounded per-run scores come from the breakdown, which
+rounded half up to 2 decimals) can differ from the reported value by 0.01. The unrounded per-run scores come from the breakdown, which
 recomputes them from the scorer CSVs and checks them against the printed values. The Original column is therefore
 taken from `breakdown_<label>_vs_<base>.json` when a base label is given; without one, the report prints the mean of
 the printed scores and says so.

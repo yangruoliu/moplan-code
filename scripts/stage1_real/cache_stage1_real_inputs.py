@@ -70,7 +70,7 @@ def images(cfg: dict, root: Path, prior_path: Path) -> dict:
                   "flow_latent": prior.expand(-1, derived["latent_frames"], -1, -1).clone(),
                   "latent_semantics": "constant_prior_placeholder_direct_only",
                   "codec": {**prior_codec, "latent_frames": derived["latent_frames"]},
-                  "provenance": {"prior_cache": str(prior_path), "prior_sha256": prior_hash,
+                  "provenance": {"prior_cache": Path(prior_path).name, "prior_sha256": prior_hash,
                                  "first_frame_sha256": hashlib.sha256(Path(frame_path).read_bytes()).hexdigest(),
                                  "future_labels_used_for_inputs": False}}
         temp = target.with_name(target.name + f".tmp{os.getpid()}")

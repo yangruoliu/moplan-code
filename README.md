@@ -40,6 +40,7 @@ See [docs/INSTALL.md](docs/INSTALL.md). In short (Linux x86_64, CUDA 12.4, one 8
 
 ```bash
 conda create --name moplan --file setup/conda-linux-64.lock.txt && conda activate moplan   # the tested route
+ln -s libopenh264.so.6 "$CONDA_PREFIX/lib/libopenh264.so.5"     # lets the lock file's ffmpeg start (INSTALL.md, Video tools)
 pip install -r requirements.txt
 bash setup/install_third_party.sh                               # SAM 2 and co-tracker at pinned commits
 python setup/download_weights.py                                # Wan2.2, MoPlan, SAM 2.1, CoTracker3 (sha256-checked)
@@ -49,8 +50,9 @@ python setup/check_env.py
 
 The lock file is the only tested route; `environment.yml` (option B in INSTALL.md) pins the same Python packages but
 has not been tested. An inference-only setup (`python setup/download_weights.py --only wan,moplan,sam2`) runs
-`python setup/check_env.py --inference-only` instead. The lock file's ffmpeg needs one extra step before the
-evaluation steps can use it; see [Video tools](docs/INSTALL.md#video-tools).
+`python setup/check_env.py --inference-only` instead. The `ln -s` line is needed only by the evaluation steps that
+call `ffmpeg` / `ffprobe` from `PATH`; without it the full check reports them as FAIL. See
+[Video tools](docs/INSTALL.md#video-tools).
 
 `source setup/env.sh` is needed in every shell before running a launcher. It sets the five shared variables:
 

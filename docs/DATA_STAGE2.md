@@ -57,8 +57,9 @@ A clip whose scene has come to rest before its end is extended with its last rea
 (`frames_real < frames`), and its plan is held. Other keys (`cond_null`, `cond_zero`, `labels_real`,
 `object_masks_latent`, plan summaries, `video_path`, `first_frame_path`, `prompt`) are written for analysis and for the
 RAFT preparation. `video_path` and `first_frame_path` hold absolute paths of the machine that built the cache, because
-the RAFT preparation and the data manifests open the files by these paths. Provenance records (checkpoint, manifest
-and prior entries of the caches, exports, receipts and summaries) give file or folder names plus sha256 instead.
+the RAFT preparation opens the files by these paths (the data manifests hold the same paths for the same reason).
+Other recorded inputs (checkpoints, manifests, priors, the PhyCo `target_path`, text-encoder folders and the sources
+named in receipts and summaries) are given as file or folder names, with sha256 where the record has one.
 
 ## Sources and licences
 

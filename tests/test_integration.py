@@ -159,6 +159,11 @@ def test_showcase_verify_does_not_fail_on_export_references(tmp_path, capsys):
     assert showcase.main(["verify", str(tmp_path)]) == 0
     out = capsys.readouterr().out
     assert "DIFFERS" not in out and out.count("NOT-VERIFIABLE") == len(unverifiable)
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    assert showcase.main(["verify", str(empty)]) == 0                  # nothing to compare is not a difference
+    out = capsys.readouterr().out
+    assert "NOT-VERIFIABLE" not in out and out.count("NO-OUTPUT") == len(unverifiable)
 
 
 def test_showcase_readme_table_and_case_numbers_are_current():

@@ -107,7 +107,7 @@ def main() -> None:
         "candidate_videos_scored": sum(len(group) for group in rewards.values()),
         "conditions_selected": made, "expected_group_size": a.expected_group_size,
         "winner_only": a.winner_only, "margin": a.margin,
-        "source_generated": str(generated.resolve()), "condition_ids": sorted(rewards)}, indent=2) + "\n")
+        "source_generated": generated.resolve().name, "condition_ids": sorted(rewards)}, indent=2) + "\n")
     print(f"DPO_PAIRS {made} pairs from {len(rewards)} samples (margin {a.margin}); reward spread across seeds: median {np.median(gaps):.3f}, "
           f"share >= 0.1: {np.mean(gaps >= 0.1):.2f}, >= 0.3: {np.mean(gaps >= 0.3):.2f}")
 

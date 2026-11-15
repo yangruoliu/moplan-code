@@ -48,6 +48,12 @@ DESC_NEW = CODE_NEW + "/descriptions/best_practice/descriptions_base.csv"
 DESC_NEW_ORIG = CODE_NEW + "/descriptions/descriptions_original.csv"
 DESC_OLD = CODE_OLD + "/descriptions/descriptions.csv"
 
+
+def shown(path, checkout):
+    """a file of a scorer checkout as recorded in the output: <checkout folder name>/<path inside it>, no machine path"""
+    return os.path.join(os.path.basename(os.path.normpath(checkout)), os.path.relpath(path, checkout))
+
+
 ARMS = {
     "final": _args.final,
     "base": _args.base,
@@ -363,7 +369,8 @@ def main():
                                     "dirs": "<label>-op-run_XX__orig_ec2c611",
                                     "components": "score_st/sp/ws = metric_mean / rounded physical variance; "
                                                   "score_mse = mse_mean - rounded variance_mse (subtracted: lower is better)"}},
-        "categories": {"source": DESC_NEW, "also_checked_identical": [DESC_NEW_ORIG, DESC_OLD],
+        "categories": {"source": shown(DESC_NEW, CODE_NEW), "also_checked_identical": [shown(DESC_NEW_ORIG, CODE_NEW),
+                                                                                   shown(DESC_OLD, CODE_OLD)],
                        "n_scenarios": {c: int(masks[c].sum()) for c in rows},
                        "scenario_to_category": dict(zip(scen, cats.tolist()))},
         "bootstrap": {"B": B, "seed": SEED, "rng": "numpy.default_rng",

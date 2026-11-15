@@ -224,9 +224,9 @@ def encode_captions(captions: dict[str, str], model_dir: Path, pad_length: int) 
                        for name in ("tokenizer.json", "tokenizer_config.json", "special_tokens_map.json", "spiece.model")
                        if (model_dir / "tokenizer" / name).is_file()}
     encoder_config = model_dir / "text_encoder/config.json"
-    provenance = {"tokenizer_path": str((model_dir / "tokenizer").resolve()),
+    provenance = {"tokenizer_path": f"{Path(model_dir).resolve().name}/tokenizer",      # Wan folder name, no machine path
                   "tokenizer_files_sha256": tokenizer_files,
-                  "text_encoder_path": str((model_dir / "text_encoder").resolve()),
+                  "text_encoder_path": f"{Path(model_dir).resolve().name}/text_encoder",
                   "text_encoder_config_sha256": hashlib.sha256(encoder_config.read_bytes()).hexdigest(),
                   "max_length": pad_length, "padding": "max_length", "truncation": True,
                   "add_special_tokens": True, "dtype": "bfloat16",
